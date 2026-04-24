@@ -1,0 +1,3000 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Agroyarico">
+<meta name="theme-color" content="#0f5132">
+<title>Agroyarico</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f8faf8;--bg2:#ffffff;--bg3:#f0f4f0;--bg4:#e8ede8;
+  --text:#1a2e1a;--text2:#5a6e5a;--text3:#9aaa9a;
+  --border:#dde8dd;--border2:#c8d8c8;
+  --green:#1a8a3a;--gbg:#e8f5ec;--gtx:#0f5a27;--gdark:#1a8a3a;
+  --amber:#b87a00;--abg:#fff8e6;--atx:#7a5000;
+  --blue:#1a5fa8;--bbg:#e8f0fb;--btx:#0f3d6e;
+  --red:#c0392b;--rbg:#fdecea;--rtx:#8b1a1a;
+  --purple:#6e3aa8;--pbg:#f3eefb;
+  --r:10px;--rl:14px;
+  --nav-h:62px;--safe-b:env(safe-area-inset-bottom,0px);
+  --shadow:0 2px 16px rgba(0,0,0,.08);
+  --glow:0 0 24px rgba(26,138,58,.12);
+}
+html{height:100%;height:100dvh;overflow:hidden;background:var(--bg)}
+body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);font-size:14px;margin:0;padding:0}
+
+/* ── LOADER ── */
+#loader{position:fixed;inset:0;background:linear-gradient(135deg,#e8f5ec 0%,#1a8a3a 100%);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .5s}
+#loader.hide{opacity:0;pointer-events:none}
+.loader-icon{width:80px;height:80px;background:rgba(63,185,80,.15);border-radius:24px;display:flex;align-items:center;justify-content:center;border:1.5px solid rgba(63,185,80,.3);box-shadow:var(--glow)}
+.loader-title{color:#fff;font-size:24px;font-weight:800;letter-spacing:-.5px}
+.loader-sub{color:rgba(255,255,255,.5);font-size:13px}
+.loader-bar{width:160px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+.loader-fill{height:100%;background:var(--green);animation:lf 1.4s ease-in-out infinite}
+@keyframes lf{0%{width:0;margin-left:0}50%{width:60%;margin-left:0}100%{width:0;margin-left:160px}}
+
+/* ── LAYOUT ── */
+.app{display:flex;flex-direction:column;height:100dvh;width:100%;overflow:hidden}
+.main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding-bottom:calc(var(--nav-h) + var(--safe-b) + 20px)}
+.page{display:none;padding:14px 12px 8px;animation:fi .18s ease}
+.page.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* ── BOTTOM NAV ── */
+.bnav{
+  position:fixed;bottom:0;left:0;right:0;
+  height:calc(var(--nav-h) + var(--safe-b));
+  padding-bottom:var(--safe-b);
+  background:var(--bg2);
+  border-top:1px solid var(--border);
+  display:flex;z-index:200;
+  box-shadow:0 -2px 12px rgba(0,0,0,.06)
+}
+.bni{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;cursor:pointer;border:none;background:none;color:var(--text3);
+  font-family:inherit;font-size:10px;font-weight:600;padding:6px 2px;
+  transition:color .15s;position:relative
+}
+.bni svg{width:22px;height:22px;stroke-width:1.8;transition:transform .15s}
+.bni.active{color:var(--green)}
+.bni.active svg{transform:scale(1.1)}
+.bni .badge{
+  position:absolute;top:5px;right:calc(50% - 18px);
+  background:var(--red);color:#fff;font-size:9px;font-weight:700;
+  padding:1px 5px;border-radius:8px;min-width:16px;text-align:center
+}
+
+/* ── HEADERS ── */
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.ptitle{font-size:20px;font-weight:800;letter-spacing:-.3px}
+.psub{font-size:12px;color:var(--text2);margin-top:1px}
+
+/* ── CARDS ── */
+.card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--rl);padding:14px;margin-bottom:10px
+}
+.card-green{border-color:rgba(63,185,80,.3);box-shadow:var(--glow)}
+.ct{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text)}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:6px}
+
+/* ── METRICS ── */
+.mrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.mc{
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);
+  padding:12px 14px;cursor:pointer;transition:border-color .15s
+}
+.mc:active{border-color:var(--green)}
+.ml{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.mv{font-size:22px;font-weight:800;line-height:1;color:var(--text)}
+.mu{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* ── BADGES ── */
+.bdg{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.bg{background:var(--gbg);color:var(--gtx);border:1px solid rgba(63,185,80,.3)}
+.ba{background:var(--abg);color:var(--atx);border:1px solid rgba(210,153,34,.3)}
+.bb{background:var(--bbg);color:var(--btx);border:1px solid rgba(88,166,255,.3)}
+.br{background:var(--rbg);color:var(--rtx);border:1px solid rgba(248,81,73,.3)}
+.bgr{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+
+/* ── ALERTS ── */
+.alt{padding:10px 13px;border-radius:var(--r);font-size:13px;margin-bottom:8px;display:flex;gap:9px;align-items:flex-start;border-left:3px solid}
+.alt-r{background:var(--rbg);color:var(--rtx);border-color:var(--red)}
+.alt-a{background:var(--abg);color:var(--atx);border-color:var(--amber)}
+.alt-g{background:var(--gbg);color:var(--gtx);border-color:var(--green)}
+.alt-b{background:var(--bbg);color:var(--btx);border-color:var(--blue)}
+.alt-title{font-weight:700;font-size:13px;margin-bottom:2px}
+.alt-desc{font-size:12px;opacity:.85}
+
+/* ── FORMS ── */
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+.fl{font-size:12px;color:var(--text2);font-weight:600;letter-spacing:.01em}
+input,select,textarea{
+  font-family:inherit;font-size:16px;padding:11px 13px;
+  border:1.5px solid var(--border2);border-radius:var(--r);
+  background:var(--bg3);color:var(--text);width:100%;
+  transition:border-color .15s,box-shadow .15s;
+  -webkit-appearance:none;appearance:none
+}
+input:focus,select:focus{
+  outline:none;border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(63,185,80,.15)
+}
+input::placeholder{color:var(--text3)}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── BUTTONS ── */
+.btn{
+  font-family:inherit;font-size:15px;padding:12px 16px;
+  border:1.5px solid var(--border2);border-radius:var(--r);
+  background:var(--bg3);color:var(--text);cursor:pointer;
+  font-weight:600;width:100%;margin-top:4px;
+  transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px
+}
+.btn:active{opacity:.8;transform:scale(.98)}
+.btp{background:var(--gdark);color:#fff;border-color:var(--green);box-shadow:0 2px 12px rgba(63,185,80,.2)}
+.btp:active{background:var(--green)}
+.btd{background:var(--rbg);color:var(--rtx);border-color:rgba(248,81,73,.3)}
+.bts{padding:6px 12px;font-size:12px;width:auto;margin-top:0}
+.btb{background:var(--bbg);color:var(--btx);border-color:rgba(88,166,255,.3)}
+
+/* ── TABS ── */
+.trow{display:flex;overflow-x:auto;border-bottom:1px solid var(--border);margin-bottom:14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.trow::-webkit-scrollbar{display:none}
+.tab{
+  padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;
+  color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px;
+  white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;
+  font-family:inherit;flex-shrink:0;transition:color .15s
+}
+.tab.active{color:var(--green);border-bottom-color:var(--green)}
+.tc{display:none}.tc.active{display:block}
+
+/* ── TABLES ── */
+.tbl-wrap{overflow-x:auto;margin:0 -2px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:6px 8px;border-bottom:1px solid var(--border)}
+td{padding:10px 8px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text)}
+tr:last-child td{border-bottom:none}
+.er td{text-align:center;color:var(--text2);padding:20px!important;font-style:italic}
+.dbtn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;padding:2px 6px;line-height:1;transition:color .15s}
+.dbtn:active{color:var(--red)}
+
+/* ── LOTE CARDS ── */
+.lgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.lcard{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);
+  padding:13px;transition:border-color .15s
+}
+.lcard:hover{border-color:var(--border2)}
+.ln{font-size:14px;font-weight:700;margin-bottom:4px}
+.ld{font-size:12px;color:var(--text2);margin-bottom:2px}
+.lcard-actions{display:flex;gap:6px;margin-top:10px}
+
+/* ── CHECKLIST ── */
+.chkl{list-style:none}
+.chkl li{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);font-size:14px;cursor:pointer;user-select:none}
+.chkl li:last-child{border-bottom:none}
+.chkb{width:22px;height:22px;border:2px solid var(--border2);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.chkb.on{background:var(--gdark);border-color:var(--green)}
+.chkm{width:10px;height:6px;border-left:2px solid var(--green);border-bottom:2px solid var(--green);transform:rotate(-45deg) translate(1px,-1px);opacity:0}
+.chkb.on .chkm{opacity:1}
+.chkt.on{text-decoration:line-through;color:var(--text3)}
+
+/* ── ACTIVITY ── */
+.act-item{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.act-item:last-child{border-bottom:none}
+.act-ico{font-size:18px;flex-shrink:0;width:28px;text-align:center}
+.act-time{font-size:11px;color:var(--text3);white-space:nowrap;margin-left:auto;padding-left:8px}
+
+/* ── LLUVIA MES ── */
+.mes-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.mes-card{background:var(--bg3);border-radius:var(--r);padding:10px 12px;border-left:3px solid var(--border2)}
+.mes-name{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:4px}
+.mes-mm{font-size:22px;font-weight:800;line-height:1;margin-bottom:3px}
+.imp-optimo{border-left-color:var(--green)}.imp-optimo .mes-mm{color:var(--green)}
+.imp-exceso-mod{border-left-color:var(--blue)}.imp-exceso-mod .mes-mm{color:var(--blue)}
+.imp-exceso-grav,.imp-estres{border-left-color:var(--red)}.imp-exceso-grav .mes-mm,.imp-estres .mes-mm{color:var(--red)}
+.imp-suboptimo{border-left-color:var(--amber)}.imp-suboptimo .mes-mm{color:var(--amber)}
+.imp-sin{border-left-color:var(--border2)}
+
+/* ── CHARTS ── */
+.chart-wrap{height:120px;display:flex;align-items:flex-end;gap:3px;overflow-x:auto;padding:2px 0;scrollbar-width:none}
+.chart-wrap::-webkit-scrollbar{display:none}
+.bw{flex:1;min-width:24px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.bv{font-size:9px;font-weight:600;color:var(--text2);text-align:center;white-space:nowrap}
+.br2{width:100%;border-radius:3px 3px 0 0}
+.blb{font-size:9px;color:var(--text3);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:400;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
+.modal-bg.open{display:flex}
+.modal{
+  background:var(--bg2);border-radius:var(--rl) var(--rl) 0 0;
+  padding:20px 16px;width:100%;max-height:92vh;overflow-y:auto;
+  padding-bottom:calc(24px + var(--safe-b));
+  border-top:1px solid var(--border)
+}
+.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 16px}
+.modal-title{font-size:18px;font-weight:800;margin-bottom:16px;letter-spacing:-.3px}
+.modal-foot{display:flex;gap:8px;margin-top:14px}
+.modal-foot .btn{margin-top:0}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:calc(var(--nav-h) + var(--safe-b) + 14px);
+  left:50%;transform:translateX(-50%);
+  padding:10px 20px;border-radius:24px;
+  font-size:14px;font-weight:600;opacity:0;pointer-events:none;
+  transition:opacity .25s,background .2s;z-index:9999;
+  white-space:nowrap;max-width:88vw;text-align:center;
+  box-shadow:0 4px 20px rgba(0,0,0,.15)
+}
+#toast.show{opacity:1}
+
+/* ── SYNC BAR ── */
+#sync-bar{display:none;position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--blue));z-index:9990;animation:sbpulse 1.2s ease-in-out infinite}
+@keyframes sbpulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── LIVE BADGE ── */
+.live-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--gbg);border:1px solid rgba(63,185,80,.3);
+  color:var(--gtx);border-radius:20px;padding:2px 9px;font-size:11px;font-weight:600
+}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pu 1.5s infinite}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* ── COST/HA ── */
+.cost-ha-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.cost-ha-card{background:var(--bg3);border-radius:var(--r);padding:10px 12px}
+.cost-ha-lote{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:3px}
+.cost-ha-val{font-size:18px;font-weight:800}
+.cost-ha-sub{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* ── RQ CARDS ── */
+.rq-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.rq-card{
+  border:2px solid var(--border);border-radius:var(--rl);padding:14px 10px;
+  text-align:center;cursor:pointer;background:var(--bg2);transition:all .15s
+}
+.rq-card.sel,.rq-card:active{border-color:var(--green);background:var(--gbg)}
+.rq-icon{font-size:28px;margin-bottom:5px}
+.rq-lbl{font-size:13px;font-weight:700;color:var(--text)}
+.rq-sub{font-size:11px;color:var(--text2);margin-top:2px}
+
+
+/* ── GERENCIA ── */
+.semaforo-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.semaforo-item:last-child{border-bottom:none}
+.semaforo-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.semaforo-label{flex:1;font-size:13px;font-weight:600}
+.semaforo-val{font-size:12px;color:var(--text2);text-align:right}
+.kpi-rend-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.kpi-rend-row:last-child{border-bottom:none}
+.kpi-rend-lbl{flex:1;font-size:12px;color:var(--text)}
+.kpi-rend-bar{width:80px;height:8px;background:var(--border);border-radius:4px;overflow:hidden;flex-shrink:0}
+.kpi-rend-fill{height:100%;border-radius:4px;transition:width .5s}
+.kpi-rend-pct{width:36px;font-size:12px;font-weight:700;text-align:right;flex-shrink:0}
+.lote-kpi-bar{margin-bottom:10px}
+.lote-kpi-nombre{font-size:13px;font-weight:700;margin-bottom:3px}
+.lote-kpi-info{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px}
+
+/* ── PROGRESS BAR ── */
+.prog-bar{height:8px;background:var(--bg4);border-radius:4px;overflow:hidden;margin:6px 0}
+.prog-fill{height:100%;border-radius:4px;transition:width .6s ease}
+
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-icon">
+    <svg width="42" height="42" viewBox="0 0 20 20" fill="none">
+      <path d="M10 2C10 2 5 6 5 11a5 5 0 0 0 10 0C15 6 10 2 10 2Z" fill="#3fb950"/>
+      <path d="M10 8v6M7 11l3-3 3 3" stroke="#0d1117" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="loader-title">Agroyarico</div>
+  <div class="loader-sub" id="loader-msg">Conectando con la base de datos…</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<div id="sync-bar"></div>
+<div id="toast"></div>
+
+<div class="app">
+<div class="main" id="main">
+
+<!-- ══ PANEL ══ -->
+<div id="page-resumen" class="page active">
+  <!-- Header verde dinámico -->
+  <div style="background:linear-gradient(135deg,#1a6b38 0%,#2d8f54 100%);border-radius:var(--rl);padding:16px;margin-bottom:12px;color:#fff;position:relative;overflow:hidden">
+    <div style="position:absolute;right:-20px;top:-20px;width:110px;height:110px;background:rgba(255,255,255,.07);border-radius:50%"></div>
+    <div style="position:absolute;right:30px;bottom:-35px;width:80px;height:80px;background:rgba(255,255,255,.05);border-radius:50%"></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative">
+      <div>
+        <div style="font-size:11px;opacity:.8;text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px">Agroyarico 🌿</div>
+        <div style="font-size:21px;font-weight:800;letter-spacing:-.3px" id="p-saludo">Buenos días</div>
+        <div style="font-size:12px;opacity:.7;margin-top:2px" id="p-fecha-hoy"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="live-badge" style="background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.3);color:#fff"><div class="live-dot" style="background:#fff"></div><span id="live-txt">En vivo</span></div>
+        <button onclick="cargarTodo()" style="background:rgba(255,255,255,.2);border:none;border-radius:8px;color:#fff;font-size:18px;width:34px;height:34px;cursor:pointer">↻</button>
+      </div>
+    </div>
+    <div id="sync-status" style="font-size:11px;opacity:.7;margin-top:8px;position:relative">Cargando…</div>
+    <!-- Stats rápidas en el header -->
+    <div style="display:flex;gap:0;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.15);position:relative">
+      <div style="flex:1;text-align:center">
+        <div style="font-size:19px;font-weight:800" id="p-mm-mes">0</div>
+        <div style="font-size:10px;opacity:.75" id="p-mm-mes-imp">mm mes</div>
+      </div>
+      <div style="width:1px;background:rgba(255,255,255,.2)"></div>
+      <div style="flex:1;text-align:center">
+        <div style="font-size:19px;font-weight:800" id="p-lab">0</div>
+        <div style="font-size:10px;opacity:.75">labores</div>
+      </div>
+      <div style="width:1px;background:rgba(255,255,255,.2)"></div>
+      <div style="flex:1;text-align:center">
+        <div style="font-size:19px;font-weight:800" id="p-ctot">$0</div>
+        <div style="font-size:10px;opacity:.75">costo</div>
+      </div>
+      <div style="width:1px;background:rgba(255,255,255,.2)"></div>
+      <div style="flex:1;text-align:center">
+        <div style="font-size:19px;font-weight:800" id="p-maq">0</div>
+        <div style="font-size:10px;opacity:.75">maquinaria</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alertas -->
+  <div id="alertas-panel"></div>
+
+  <!-- Estado de labores -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
+    <div class="mc" onclick="navTo('labores')" style="text-align:center;padding:10px 4px;border-left:3px solid var(--green)">
+      <div style="font-size:20px;margin-bottom:2px">✅</div>
+      <div class="mv" id="p-lab-comp" style="font-size:20px;color:var(--green)">0</div>
+      <div class="mu">completadas</div>
+    </div>
+    <div class="mc" onclick="navTo('labores')" style="text-align:center;padding:10px 4px;border-left:3px solid var(--amber)">
+      <div style="font-size:20px;margin-bottom:2px">🔄</div>
+      <div class="mv" id="p-lab-proc" style="font-size:20px;color:var(--amber)">0</div>
+      <div class="mu">en proceso</div>
+    </div>
+    <div class="mc" onclick="navTo('labores')" style="text-align:center;padding:10px 4px;border-left:3px solid var(--blue)">
+      <div style="font-size:20px;margin-bottom:2px">📋</div>
+      <div class="mv" id="p-lab-prog" style="font-size:20px;color:var(--blue)">0</div>
+      <div class="mu">programadas</div>
+    </div>
+  </div>
+
+  <!-- Lluvia 14 días -->
+  <div class="card" onclick="navTo('lluvia')" style="cursor:pointer">
+    <div class="ch" style="margin-bottom:8px">
+      <span class="ct">🌧️ Lluvia — últimos 14 días</span>
+      <span id="p-ll-estado" style="font-size:12px"></span>
+    </div>
+    <div id="chart-lluvia-panel" style="height:80px;display:flex;align-items:flex-end;gap:2px">
+      <span style="color:var(--text2);font-size:12px;margin:auto">Sin registros</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px">
+      <span style="color:var(--text2)">📏 Req: 5mm/día</span>
+      <span id="p-ll-bal" style="font-weight:700;color:var(--blue)"></span>
+    </div>
+  </div>
+
+  <!-- Costos semanales -->
+  <div class="card">
+    <div class="ch">
+      <span class="ct">📊 Costos por semana</span>
+      <span id="p-trend" style="font-size:11px;color:var(--text2)"></span>
+    </div>
+    <div id="chart-costos-semana" style="height:100px;display:flex;align-items:flex-end;gap:3px">
+      <span style="color:var(--text2);font-size:12px;margin:auto">Sin costos aún</span>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap">
+      <span style="font-size:11px;color:var(--text2)">🟢 Lab <strong id="p-cl">$0</strong></span>
+      <span style="font-size:11px;color:var(--text2)">🔵 Maq <strong id="p-cm">$0</strong></span>
+      <span style="font-size:11px;color:var(--text2)">🟡 Ins <strong id="p-ci">$0</strong></span>
+    </div>
+  </div>
+
+  <!-- Siembra + Distribución -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+    <div class="card" onclick="navTo('siembra')" style="cursor:pointer;padding:12px">
+      <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🌱 Siembra</div>
+      <div id="p-sie-progress"></div>
+      <div style="font-size:11px;color:var(--text2);margin-top:4px" id="p-sie-txt">—</div>
+    </div>
+    <div class="card" onclick="navTo('labores')" style="cursor:pointer;padding:12px">
+      <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">💰 Distribución</div>
+      <div id="chart-dist"></div>
+    </div>
+  </div>
+
+  <!-- Costo/ha -->
+  <div class="card" onclick="navTo('lotes')" style="cursor:pointer">
+    <div class="ct">📐 Costo / ha por lote</div>
+    <div class="cost-ha-grid" id="cost-ha-panel"><p style="color:var(--text2);font-size:13px;grid-column:1/-1">Registra labores por lote</p></div>
+  </div>
+
+  <!-- Actividad -->
+  <div class="card">
+    <div class="ct">⏱ Actividad reciente</div>
+    <div id="actividad-lista"><p style="color:var(--text2);font-size:13px">Sin actividad</p></div>
+  </div>
+</div>
+
+<!-- ══ REGISTRO RÁPIDO ══ -->
+<div id="page-rapido" class="page">
+  <div class="ph"><div class="ptitle">⚡ Registro rápido</div></div>
+  <div class="rq-grid">
+    <div class="rq-card sel" onclick="selRQ('labor',this)"><div class="rq-icon">👷</div><div class="rq-lbl">Labor</div><div class="rq-sub">campo</div></div>
+    <div class="rq-card" onclick="selRQ('maq',this)"><div class="rq-icon">🚜</div><div class="rq-lbl">Maquinaria</div><div class="rq-sub">horas y equipo</div></div>
+    <div class="rq-card" onclick="selRQ('lluvia',this)"><div class="rq-icon">🌧️</div><div class="rq-lbl">Lluvia</div><div class="rq-sub">mm del día</div></div>
+    <div class="rq-card" onclick="selRQ('insumo',this)"><div class="rq-icon">🧴</div><div class="rq-lbl">Insumo</div><div class="rq-sub">fertilizante</div></div>
+  </div>
+  <div class="card" id="rq-labor">
+    <div class="ct">👷 Labor de campo</div>
+    <div class="fg"><div class="fl">Fecha</div><input type="date" id="rq-l-f"></div>
+    <div class="fg"><div class="fl">Lote</div><select id="rq-l-lo"><option value="">Seleccionar lote…</option></select></div>
+    <div class="fg"><div class="fl">Tipo de labor</div>
+      <select id="rq-l-ti" onchange="toggleManual('rq-l-ti','rq-l-ti-m',this)">
+        <option value="">Seleccionar…</option>
+        <optgroup label="Mantenimiento"><option>Plateo</option><option>Poda sanitaria</option><option>Poda de formación</option><option>Evacuación de hojas</option><option>Amarre de hojas</option><option>Polinización asistida</option><option>Control fitosanitario</option><option>Resiembra</option><option>Riego</option></optgroup>
+        <optgroup label="Fertilización"><option>Fertilización edáfica</option><option>Fertilización foliar</option><option>Fertilización orgánica</option></optgroup>
+        <optgroup label="Control malezas"><option>Rocería manual</option><option>Control malezas químico</option><option>Control espontáneas</option></optgroup>
+        <optgroup label="Drenajes"><option>Relimpia canal principal</option><option>Relimpia canal secundario</option><option>Relimpia recorredera</option><option>Desorillada</option><option>Recava canal</option></optgroup>
+        <optgroup label="Siembra"><option>Siembra nueva</option><option>Guadaña Año 1</option><option>Guadaña Año 2</option><option>Guadaña Año 3</option><option>Guadaña Año 4</option><option>Guadaña Año 5</option><option>Pepeo lonas</option></optgroup>
+        <option value="__manual__">✏ Escribir manualmente…</option>
+      </select>
+      <input type="text" id="rq-l-ti-m" placeholder="Describe la labor…" style="display:none;margin-top:6px">
+    </div>
+    <div class="fg"><div class="fl">Estado</div><select id="rq-l-es"><option>Completada</option><option>En proceso</option><option>Programada</option></select></div>
+    <div class="fg"><div class="fl">Observaciones</div><input type="text" id="rq-l-ob" placeholder="Notas…"></div>
+    <button class="btn btp" onclick="regRQLabor()">✓ Guardar labor</button>
+  </div>
+  <div class="card" id="rq-maq" style="display:none">
+    <div class="ct">🚜 Maquinaria</div>
+    <div class="fg"><div class="fl">Fecha</div><input type="date" id="rq-m-f"></div>
+    <div class="fg"><div class="fl">Máquina</div><select id="rq-m-mq"><option value="">Seleccionar…</option><option>Tractor</option><option>Rastrillo / Rastra</option><option>Subsolador</option><option>Retroexcavadora</option><option>Niveladora / Buldócer</option><option>Bomba de fumigación</option><option>Aspersora</option><option>Volqueta / Camión</option><option>Motobomba</option><option>Motosierra</option><option>Guadañadora mecánica</option><option>Otro equipo</option></select></div>
+    <div class="fg"><div class="fl">Lote</div><select id="rq-m-lo"><option value="">Seleccionar lote…</option></select></div>
+    <div class="fg"><div class="fl">Labor realizada</div><select id="rq-m-lb"><option value="">Seleccionar…</option><option>Preparación de suelo</option><option>Subsolado</option><option>Rastrillado</option><option>Nivelación</option><option>Apertura de drenajes</option><option>Aplicación herbicida</option><option>Aplicación fertilizante</option><option>Fumigación</option><option>Transporte RFF</option><option>Riego mecanizado</option><option>Mantenimiento vías</option><option>Ahoyado mecanizado</option><option>Otro</option></select></div>
+    <div class="fg"><div class="fl">Horas trabajadas</div><input type="text" inputmode="decimal" id="rq-m-hr" placeholder="0.0"></div>
+    <div class="fg"><div class="fl">Operador</div><input type="text" id="rq-m-op" placeholder="Nombre…"></div>
+    <button class="btn btp" onclick="regRQMaq()">✓ Guardar maquinaria</button>
+  </div>
+  <div class="card" id="rq-lluvia" style="display:none">
+    <div class="ct">🌧️ Lluvia del día</div>
+    <div class="fg"><div class="fl">Fecha</div><input type="date" id="rq-ll-f"></div>
+    <div class="fg"><div class="fl">Precipitación (mm)</div><input type="text" inputmode="decimal" id="rq-ll-mm" placeholder="0.0"></div>
+    <div class="fg"><div class="fl">Observación</div><input type="text" id="rq-ll-ob" placeholder="Normal, tormenta…"></div>
+    <button class="btn btp" onclick="regRQLluvia()">✓ Guardar lluvia</button>
+  </div>
+  <div class="card" id="rq-insumo" style="display:none">
+    <div class="ct">🧴 Insumo</div>
+    <div class="fg"><div class="fl">Fecha</div><input type="date" id="rq-i-f"></div>
+    <div class="fg"><div class="fl">Insumo</div><select id="rq-i-ti"><option>KCl</option><option>Urea</option><option>DAP</option><option>Kieserita</option><option>Herbicida glifosato</option><option>Herbicida paraquat</option><option>Fungicida</option><option>Insecticida</option><option>Material de siembra</option><option>Otro</option></select></div>
+    <div class="fg"><div class="fl">Lote</div><select id="rq-i-lo"><option value="Todos los lotes">Todos los lotes</option></select></div>
+    <div class="fg"><div class="fl">Cantidad (kg/L)</div><input type="text" inputmode="decimal" id="rq-i-ca" placeholder="0"></div>
+    <button class="btn btp" onclick="regRQInsumo()">✓ Guardar insumo</button>
+  </div>
+  <div class="card">
+    <div class="ct">Últimos registros</div>
+    <div id="rq-recientes"><p style="color:var(--text2);font-size:13px">Sin registros aún</p></div>
+  </div>
+</div>
+
+<!-- ══ LOTES ══ -->
+<div id="page-lotes" class="page">
+  <div class="ph"><div class="ptitle">Lotes</div><button class="btn btp bts" onclick="abrirModalLote(null)">+ Agregar</button></div>
+  <div id="lot-cards" class="lgrid"><p style="color:var(--text2)">Cargando…</p></div>
+  <div class="card">
+    <div class="ct">Costo registrado por lote</div>
+    <div class="tbl-wrap"><table><thead><tr><th>Lote</th><th>Ha</th><th>Labores</th><th>Maq.</th><th>$/ha</th></tr></thead>
+    <tbody id="costo-ha-tabla"><tr class="er"><td colspan="5">Sin datos</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- ══ LABORES ══ -->
+<div id="page-labores" class="page">
+  <div class="ptitle" style="margin-bottom:12px">Labores de campo</div>
+  <div class="trow">
+    <button class="tab active" onclick="stab('labores','reg',this)">Registrar</button>
+    <button class="tab" onclick="stab('labores','hist',this)">Historial (<span id="cnt-lab">0</span>)</button>
+    <button class="tab" onclick="stab('labores','rend',this)">Rendimiento</button>
+  </div>
+  <div id="labores-tc-reg" class="tc active">
+    <div class="card">
+      <div class="fg"><div class="fl">Fecha</div><input type="date" id="l-f"></div>
+      <div class="fg"><div class="fl">Lote</div><select id="l-lo"><option value="">Seleccionar lote…</option></select></div>
+      <div class="fg"><div class="fl">Tipo de labor</div>
+        <select id="l-ti" onchange="toggleManual('l-ti','l-ti-m',this)">
+          <option value="">Seleccionar…</option>
+          <optgroup label="Mantenimiento palma"><option>Plateo</option><option>Poda sanitaria — $1.176/palma</option><option>Poda de formación</option><option>Evacuación de hojas</option><option>Amarre de hojas</option><option>Polinización asistida — $8.331/ha</option><option>Control fitosanitario</option><option>Resiembra</option><option>Riego</option></optgroup>
+          <optgroup label="Fertilización"><option>Fertilización edáfica &lt;1000g — $49,92/palma</option><option>Fertilización edáfica 1000-2000g — $53,40/palma</option><option>Fertilización orgánica 5kg — $186,91/palma</option><option>Fertilización orgánica 10kg — $285,59/palma</option><option>Fertilización foliar</option></optgroup>
+          <optgroup label="Control malezas"><option>Rocería manual — $50.692/ha</option><option>Control malezas químico — $40.672/ha</option><option>Control espontáneas — $28.609/ha</option></optgroup>
+          <optgroup label="Drenajes y canales"><option>Relimpia canal principal — $559/ml</option><option>Relimpia canal secundario — $426/ml</option><option>Relimpia recorredera — $237/ml</option><option>Relimpia canal principal guadaña — $68/m</option><option>Desorillada — $46/m</option><option>Recava canal principal — $978/ml</option><option>Recava canal secundario — $818/ml</option></optgroup>
+          <optgroup label="Siembra y preparación"><option>Siembra nueva — $161,37/palma</option><option>Guadaña Año 1 — $108,07/palma</option><option>Guadaña Año 2 — $128,40/palma</option><option>Guadaña Año 3 — $161,84/palma</option><option>Guadaña Año 4 — $162,64/palma</option><option>Guadaña Año 5 — $181,37/palma</option><option>Pepeo lonas — $212,99/KL</option></optgroup>
+          <optgroup label="Fitosanidad"><option>Control Brasoliss</option><option>Control hormiga palma adulta</option><option>Inyección palma plagas</option><option>Cirugía PC</option><option>Detección de plagas</option></optgroup>
+          <option value="__manual__">✏ Escribir manualmente…</option>
+        </select>
+        <input type="text" id="l-ti-m" placeholder="Describe la labor…" style="display:none;margin-top:6px">
+      </div>
+      <div class="fr2">
+        <div class="fg"><div class="fl">Trabajadores</div><input type="text" inputmode="numeric" id="l-tr" placeholder="0"></div>
+        <div class="fg"><div class="fl">Área (ha)</div><input type="text" inputmode="decimal" id="l-ar" placeholder="0.00"></div>
+      </div>
+      <div class="fr2">
+        <div class="fg"><div class="fl">Jornales</div><input type="text" inputmode="decimal" id="l-jo" placeholder="1"></div>
+        <div class="fg"><div class="fl">Costo ($COP)</div><input type="text" inputmode="numeric" id="l-co" placeholder="0"></div>
+      </div>
+      <div class="fg"><div class="fl">Estado</div><select id="l-es"><option>Completada</option><option>En proceso</option><option>Programada</option></select></div>
+      <div class="fg"><div class="fl">Observaciones</div><input type="text" id="l-ob" placeholder="Notas…"></div>
+      <button class="btn btp" onclick="regLabor()">Guardar labor</button>
+    </div>
+  </div>
+  <div id="labores-tc-hist" class="tc">
+    <div class="card">
+      <div class="ch"><span class="ct">Historial</span><button class="btn bts" onclick="expL()">CSV</button></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Fecha</th><th>Lote</th><th>Labor</th><th>Estado (toca para cambiar)</th><th></th></tr></thead>
+      <tbody id="l-hist"><tr class="er"><td colspan="6">Sin registros</td></tr></tbody></table></div>
+    </div>
+  </div>
+  <div id="labores-tc-rend" class="tc">
+    <div class="mrow">
+      <div class="mc"><div class="ml">Total</div><div class="mv" id="r-n">0</div><div class="mu">labores</div></div>
+      <div class="mc"><div class="ml">Ha trabajadas</div><div class="mv" id="r-ha">0</div><div class="mu">acumuladas</div></div>
+      <div class="mc"><div class="ml">Costo total</div><div class="mv" id="r-co">$0</div><div class="mu">COP</div></div>
+      <div class="mc"><div class="ml">Jornales</div><div class="mv" id="r-jo">0</div><div class="mu">días</div></div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">Rendimiento vs estándar</div>
+      <table><thead><tr><th>Labor</th><th>Estándar</th><th>Real</th><th>%</th></tr></thead>
+      <tbody id="r-tbl"><tr class="er"><td colspan="4">Sin datos</td></tr></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAQUINARIA ══ -->
+<div id="page-maquinaria" class="page">
+  <div class="ptitle" style="margin-bottom:12px">Maquinaria</div>
+  <div class="mrow">
+    <div class="mc"><div class="ml">Registros</div><div class="mv" id="m-n">0</div><div class="mu">usos</div></div>
+    <div class="mc"><div class="ml">Horas</div><div class="mv" id="m-hrs">0</div><div class="mu">acumuladas</div></div>
+    <div class="mc"><div class="ml">Ha</div><div class="mv" id="m-ha">0</div><div class="mu">trabajadas</div></div>
+    <div class="mc"><div class="ml">Costo</div><div class="mv" id="m-co">$0</div><div class="mu">COP</div></div>
+  </div>
+  <div class="trow">
+    <button class="tab active" onclick="stab('maq','reg',this)">Registrar</button>
+    <button class="tab" onclick="stab('maq','hist',this)">Historial (<span id="cnt-maq">0</span>)</button>
+    <button class="tab" onclick="stab('maq','rend',this)">Análisis</button>
+    <button class="tab" onclick="stab('maq','mant',this)">Mantenimiento</button>
+  </div>
+  <div id="maq-tc-reg" class="tc active">
+    <div class="card">
+      <div class="fg"><div class="fl">Fecha</div><input type="date" id="m-f"></div>
+      <div class="fg"><div class="fl">Máquina</div><select id="m-mq"><option value="">Seleccionar…</option><option>Tractor</option><option>Rastrillo / Rastra</option><option>Subsolador</option><option>Arado</option><option>Niveladora / Buldócer</option><option>Retroexcavadora</option><option>Bomba de fumigación</option><option>Aspersora autopropulsada</option><option>Cosechadora / Alzadora</option><option>Volqueta / Camión</option><option>Motobomba</option><option>Motosierra</option><option>Guadañadora mecánica</option><option>Otro equipo</option></select></div>
+      <div class="fg"><div class="fl">Labor realizada</div><select id="m-lb"><option value="">Seleccionar…</option><option>Preparación de suelo</option><option>Subsolado</option><option>Rastrillado</option><option>Nivelación</option><option>Apertura de drenajes</option><option>Aplicación herbicida</option><option>Aplicación fertilizante</option><option>Fumigación</option><option>Transporte RFF</option><option>Riego mecanizado</option><option>Mantenimiento vías</option><option>Ahoyado mecanizado</option><option>Otro</option></select></div>
+      <div class="fg"><div class="fl">Lote</div><select id="m-lo"><option value="">Seleccionar lote…</option></select></div>
+      <div class="fr2">
+        <div class="fg"><div class="fl">Horas</div><input type="text" inputmode="decimal" id="m-hr" placeholder="0.0"></div>
+        <div class="fg"><div class="fl">Área (ha)</div><input type="text" inputmode="decimal" id="m-ar" placeholder="0"></div>
+      </div>
+      <div class="fr2">
+        <div class="fg"><div class="fl">Combustible (gal)</div><input type="text" inputmode="decimal" id="m-ga" placeholder="0"></div>
+        <div class="fg"><div class="fl">Costo ($COP)</div><input type="text" inputmode="numeric" id="m-co-i" placeholder="0"></div>
+      </div>
+      <div class="fr2">
+        <div class="fg"><div class="fl">Operador</div><input type="text" id="m-op" placeholder="Nombre…"></div>
+        <div class="fg"><div class="fl">Horómetro ini/fin</div><input type="text" id="m-hi" placeholder="ej: 1200/1208"></div>
+      </div>
+      <div class="fg"><div class="fl">Observaciones</div><input type="text" id="m-ob" placeholder="Novedades…"></div>
+      <button class="btn btp" onclick="regMaq()">Guardar registro</button>
+    </div>
+  </div>
+  <div id="maq-tc-hist" class="tc">
+    <div class="card">
+      <div class="ch"><span class="ct">Historial</span><button class="btn bts" onclick="expM()">CSV</button></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Fecha</th><th>Máquina</th><th>Lote</th><th>Hrs</th><th>Costo</th><th></th></tr></thead>
+      <tbody id="m-hist"><tr class="er"><td colspan="6">Sin registros</td></tr></tbody></table></div>
+    </div>
+  </div>
+  <div id="maq-tc-rend" class="tc">
+    <!-- KPIs -->
+    <div class="mrow">
+      <div class="mc" style="border-left:3px solid var(--blue)"><div class="ml">Galones</div><div class="mv" id="m-gal">0</div><div class="mu">consumidos</div></div>
+      <div class="mc" style="border-left:3px solid var(--amber)"><div class="ml">Eficiencia</div><div class="mv" id="m-gph">0</div><div class="mu">gal/hora</div></div>
+      <div class="mc" style="border-left:3px solid var(--green)"><div class="ml">Ha/hora</div><div class="mv" id="m-hph">0</div><div class="mu">productividad</div></div>
+      <div class="mc" style="border-left:3px solid var(--red)"><div class="ml">Costo/hora</div><div class="mv" id="m-cph">$0</div><div class="mu">COP</div></div>
+    </div>
+    <!-- Gráfica horas por máquina -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">📊 Horas por máquina</div>
+      <div id="chart-maq-hrs" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+    <!-- Gráfica costos por máquina -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">💰 Costo por máquina</div>
+      <div id="chart-maq-cos" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+    <!-- Uso por lote -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">📐 Horas por lote</div>
+      <div id="chart-maq-lote" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+    <!-- Tabla detalle -->
+    <div class="card"><div class="ct" style="margin-bottom:8px">Detalle por máquina</div>
+      <table><thead><tr><th>Máquina</th><th>Usos</th><th>Horas</th><th>Costo</th></tr></thead>
+      <tbody id="m-x-mq"><tr class="er"><td colspan="4">Sin datos</td></tr></tbody></table>
+    </div>
+    <div class="card"><div class="ct" style="margin-bottom:8px">Detalle por lote</div>
+      <table><thead><tr><th>Lote</th><th>Usos</th><th>Horas</th><th>Costo</th></tr></thead>
+      <tbody id="m-x-lo"><tr class="er"><td colspan="4">Sin datos</td></tr></tbody></table>
+    </div>
+  </div>
+  <div id="maq-tc-mant" class="tc">
+    <div class="card">
+      <div class="fg"><div class="fl">Fecha</div><input type="date" id="mt-f"></div>
+      <div class="fg"><div class="fl">Máquina</div><select id="mt-mq"><option>Tractor</option><option>Rastrillo / Rastra</option><option>Subsolador</option><option>Bomba de fumigación</option><option>Aspersora</option><option>Cosechadora</option><option>Volqueta / Camión</option><option>Motobomba</option><option>Otro equipo</option></select></div>
+      <div class="fg"><div class="fl">Tipo</div><select id="mt-ti"><option>Cambio de aceite</option><option>Cambio de filtros</option><option>Revisión general</option><option>Reparación mecánica</option><option>Cambio de llantas</option><option>Sistema hidráulico</option><option>Sistema eléctrico</option><option>Lavado general</option><option>Otro</option></select></div>
+      <div class="fr2">
+        <div class="fg"><div class="fl">Horómetro</div><input type="text" inputmode="numeric" id="mt-ho" placeholder="0"></div>
+        <div class="fg"><div class="fl">Costo ($COP)</div><input type="text" inputmode="numeric" id="mt-co" placeholder="0"></div>
+      </div>
+      <div class="fg"><div class="fl">Responsable / Taller</div><input type="text" id="mt-re" placeholder="Nombre…"></div>
+      <div class="fg"><div class="fl">Próximo mantenimiento</div><input type="date" id="mt-pr"></div>
+      <div class="fg"><div class="fl">Observaciones</div><input type="text" id="mt-ob" placeholder="Trabajos realizados…"></div>
+      <button class="btn btp" onclick="regMant()">Guardar mantenimiento</button>
+    </div>
+    <div class="card"><div class="ct">Historial (<span id="cnt-mt">0</span>)</div>
+      <div class="tbl-wrap"><table><thead><tr><th>Fecha</th><th>Máquina</th><th>Tipo</th><th>Costo</th><th></th></tr></thead>
+      <tbody id="mt-hist"><tr class="er"><td colspan="5">Sin mantenimientos</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MÁS ══ -->
+<div id="page-mas" class="page">
+  <div class="ptitle" style="margin-bottom:14px">Más módulos</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="card" style="cursor:pointer;text-align:center;padding:18px 10px;border-color:rgba(63,185,80,.2)" onclick="navTo('lotes')"><div style="font-size:30px;margin-bottom:5px">🗺️</div><div style="font-weight:700;font-size:13px">Lotes</div></div>
+    <div class="card" style="cursor:pointer;text-align:center;padding:18px 10px;border-color:rgba(63,185,80,.2)" onclick="navTo('cosecha')"><div style="font-size:30px;margin-bottom:5px">🌴</div><div style="font-weight:700;font-size:13px">Cosecha palma</div></div>
+    <div class="card" style="cursor:pointer;text-align:center;padding:18px 10px;border-color:rgba(88,166,255,.2)" onclick="navTo('lluvia')"><div style="font-size:30px;margin-bottom:5px">🌧️</div><div style="font-weight:700;font-size:13px">Lluvia</div></div>
+    <div class="card" style="cursor:pointer;text-align:center;padding:18px 10px;border-color:rgba(210,153,34,.2)" onclick="navTo('insumos')"><div style="font-size:30px;margin-bottom:5px">🧴</div><div style="font-weight:700;font-size:13px">Insumos</div></div>
+    <div class="card" style="cursor:pointer;text-align:center;padding:18px 10px;border-color:rgba(63,185,80,.2)" onclick="navTo('siembra')"><div style="font-size:30px;margin-bottom:5px">🌱</div><div style="font-weight:700;font-size:13px">Siembra</div></div>
+    <div class="card" style="cursor:pointer;text-align:center;padding:18px 10px;background:var(--gbg);border-color:rgba(63,185,80,.3)" onclick="navTo('cacao')"><div style="font-size:30px;margin-bottom:5px">🍫</div><div style="font-weight:700;font-size:13px;color:var(--gtx)">Cacao</div></div>
+    <div class="card" style="cursor:pointer;text-align:center;padding:18px 10px" onclick="exportarDatos()"><div style="font-size:30px;margin-bottom:5px">📥</div><div style="font-weight:700;font-size:13px">Exportar</div></div>
+    <div class="card" style="cursor:pointer;text-align:center;padding:18px 10px;background:var(--rbg);border-color:rgba(248,81,73,.3);grid-column:1/-1" onclick="confirmarBorrar()"><div style="font-size:30px;margin-bottom:5px">🗑️</div><div style="font-weight:700;font-size:13px;color:var(--rtx)">Borrar todos los datos</div></div>
+  </div>
+  <div class="card" style="margin-top:8px;text-align:center">
+    <div style="font-size:12px;color:var(--text2)" id="sfoot-txt">☁ Conectando…</div>
+  </div>
+  <!-- Diagnóstico -->
+  <div class="card" style="margin-top:4px">
+    <div style="font-size:13px;font-weight:700;margin-bottom:8px">🔧 Diagnóstico</div>
+    <button class="btn btb bts" onclick="runDiag()">Probar conexión</button>
+    <div id="diag-out" style="font-size:11px;color:var(--text2);margin-top:8px;white-space:pre-wrap;word-break:break-all;font-family:monospace;line-height:1.6"></div>
+  </div>
+</div>
+
+<!-- ══ COSECHA ══ -->
+<div id="page-cosecha" class="page">
+  <div class="ph"><div class="ptitle">Cosecha palma</div><button class="btn bts" onclick="navTo('mas')">← Más</button></div>
+  <div class="alt alt-b">ℹ️ Producción comercial estimada desde 2027–2028</div>
+  <div class="card">
+    <div class="fg"><div class="fl">Fecha</div><input type="date" id="c-f"></div>
+    <div class="fg"><div class="fl">Lote</div><select id="c-lo"><option value="">Seleccionar lote…</option></select></div>
+    <div class="fr2">
+      <div class="fg"><div class="fl">Racimos</div><input type="text" inputmode="numeric" id="c-ra" placeholder="0"></div>
+      <div class="fg"><div class="fl">Peso total (kg)</div><input type="text" inputmode="decimal" id="c-kg" placeholder="0"></div>
+    </div>
+    <div class="fg"><div class="fl">Precio / ton ($COP)</div><input type="text" inputmode="numeric" id="c-pr" placeholder="700000"></div>
+    <div class="fg"><div class="fl">Observaciones</div><input type="text" id="c-ob" placeholder="Calidad, notas…"></div>
+    <button class="btn btp" onclick="regCos()">Guardar cosecha</button>
+  </div>
+  <div class="card">
+    <div class="ch"><span class="ct">Cosechas (<span id="cnt-cos">0</span>)</span><button class="btn bts" onclick="expC()">CSV</button></div>
+    <div class="tbl-wrap"><table><thead><tr><th>Fecha</th><th>Lote</th><th>Kg</th><th>t/ha</th><th>Valor</th><th></th></tr></thead>
+    <tbody id="c-hist"><tr class="er"><td colspan="6">Sin cosechas</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- ══ LLUVIA ══ -->
+<div id="page-lluvia" class="page">
+  <div class="ph"><div class="ptitle">Lluvia</div><button class="btn bts" onclick="navTo('mas')">← Más</button></div>
+  <div class="mrow">
+    <div class="mc"><div class="ml">Registros</div><div class="mv" id="ll-n">0</div><div class="mu">días</div></div>
+    <div class="mc"><div class="ml">Acumulado</div><div class="mv" id="ll-tot">0</div><div class="mu">mm</div></div>
+    <div class="mc"><div class="ml">Promedio/día</div><div class="mv" id="ll-pr">0</div><div class="mu">mm (mín:5)</div></div>
+    <div class="mc"><div class="ml">Déficit hoy</div><div class="mv" id="ll-deficit">—</div><div class="mu" id="ll-deficit-sub">mm</div></div>
+  </div>
+  <div class="card">
+    <div class="fg"><div class="fl">Fecha</div><input type="date" id="ll-f"></div>
+    <div class="fg"><div class="fl">Precipitación (mm)</div><input type="text" inputmode="decimal" id="ll-mm" placeholder="0.0"></div>
+    <div class="fg"><div class="fl">Observación</div><input type="text" id="ll-ob" placeholder="Normal, tormenta…"></div>
+    <button class="btn btp" onclick="regLL()">Guardar lluvia</button>
+  </div>
+  <div class="card">
+    <div class="ct">Balance por mes (req. 5mm/día)</div>
+    <div class="mes-grid" id="lluvia-meses"><p style="color:var(--text2);font-size:13px;grid-column:1/-1">Sin registros</p></div>
+  </div>
+  <div class="card">
+    <div class="ct" style="margin-bottom:8px">Precipitación mensual</div>
+    <div class="chart-wrap" id="chart-ll"></div>
+  </div>
+  <div class="card">
+    <div class="ch"><span class="ct">Registros (<span id="cnt-ll">0</span>)</span><button class="btn bts" onclick="expLL()">CSV</button></div>
+    <div class="tbl-wrap"><table><thead><tr><th>Fecha</th><th>mm</th><th>Obs.</th><th>Estado</th><th></th></tr></thead>
+    <tbody id="ll-hist"><tr class="er"><td colspan="5">Sin registros</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- ══ INSUMOS ══ -->
+<div id="page-insumos" class="page">
+  <div class="ph"><div class="ptitle">Insumos</div><button class="btn bts" onclick="navTo('mas')">← Más</button></div>
+  <div class="mrow">
+    <div class="mc"><div class="ml">Registros</div><div class="mv" id="i-n">0</div><div class="mu">aplicaciones</div></div>
+    <div class="mc"><div class="ml">Costo total</div><div class="mv" id="i-co">$0</div><div class="mu">COP</div></div>
+  </div>
+  <div class="card">
+    <div class="fg"><div class="fl">Fecha</div><input type="date" id="i-f"></div>
+    <div class="fg"><div class="fl">Insumo</div><select id="i-ti"><option>KCl</option><option>Urea</option><option>DAP</option><option>Kieserita</option><option>Boronatrocalcita</option><option>Roca fosfórica</option><option>Herbicida glifosato</option><option>Herbicida paraquat</option><option>Fungicida</option><option>Insecticida</option><option>Material de siembra</option><option>Otro</option></select></div>
+    <div class="fg"><div class="fl">Lote</div><select id="i-lo"><option value="Todos los lotes">Todos los lotes</option></select></div>
+    <div class="fr2">
+      <div class="fg"><div class="fl">Cantidad (kg/L)</div><input type="text" inputmode="decimal" id="i-ca" placeholder="0"></div>
+      <div class="fg"><div class="fl">Costo ($COP)</div><input type="text" inputmode="numeric" id="i-coi" placeholder="0"></div>
+    </div>
+    <div class="fg"><div class="fl">Observaciones</div><input type="text" id="i-ob" placeholder="Dosis, método…"></div>
+    <button class="btn btp" onclick="regIns()">Guardar insumo</button>
+  </div>
+  <div class="card">
+    <div class="ch"><span class="ct">Historial (<span id="cnt-ins">0</span>)</span><button class="btn bts" onclick="expI()">CSV</button></div>
+    <div class="tbl-wrap"><table><thead><tr><th>Fecha</th><th>Insumo</th><th>Lote</th><th>Cant.</th><th>Costo</th><th></th></tr></thead>
+    <tbody id="i-hist"><tr class="er"><td colspan="6">Sin registros</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- ══ SIEMBRA ══ -->
+<div id="page-siembra" class="page">
+  <div class="ph"><div class="ptitle">Siembra 2026</div><button class="btn bts" onclick="navTo('mas')">← Más</button></div>
+  <div class="mrow">
+    <div class="mc"><div class="ml">Ha por sembrar</div><div class="mv" id="sie-ha">0</div><div class="mu">pendientes</div></div>
+    <div class="mc"><div class="ml">Próxima</div><div class="mv" id="sie-prox" style="font-size:12px">—</div><div class="mu">lote más próximo</div></div>
+    <div class="mc"><div class="ml">Disponibles</div><div class="mv" id="sie-disp">0</div><div class="mu">lotes para planificar</div></div>
+    <div class="mc"><div class="ml">Labores prep.</div><div class="mv" id="sie-prep">0</div><div class="mu">registradas</div></div>
+  </div>
+  <div class="trow">
+    <button class="tab active" onclick="stab('sie','plan',this)">Plan</button>
+    <button class="tab" onclick="stab('sie','prep',this)">Preparación</button>
+    <button class="tab" onclick="stab('sie','alist',this)">Alistamiento</button>
+  </div>
+  <div id="sie-tc-plan" class="tc active">
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <button class="btn btp" style="flex:1" onclick="abrirModalLote(null)">+ Nuevo lote</button>
+      <button class="btn btb" style="flex:1" onclick="abrirModalSieFutura()">🌱 Planificar</button>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="tbl-wrap"><table><thead><tr><th>Lote</th><th>Ha</th><th>Material</th><th>Fecha</th><th>Estado</th><th></th></tr></thead>
+      <tbody id="sie-tabla"><tr class="er"><td colspan="6">Sin lotes</td></tr></tbody></table></div>
+    </div>
+  </div>
+  <div id="sie-tc-prep" class="tc">
+    <div class="card">
+      <div class="ct" style="margin-bottom:12px">Registrar labor de preparación</div>
+      <div class="fg"><div class="fl">Fecha</div><input type="date" id="sp-f"></div>
+      <div class="fg"><div class="fl">Lote</div><select id="sp-lo"><option value="">Seleccionar lote…</option></select></div>
+      <div class="fg"><div class="fl">Labor</div>
+        <select id="sp-ti">
+          <option value="">Seleccionar…</option>
+          <option>Subsolado</option><option>Rastrillado</option><option>Nivelación</option>
+          <option>Apertura de drenajes</option><option>Aplicación de cal / enmienda</option>
+          <option>Trazado y estacado</option><option>Ahoyado manual</option>
+          <option>Ahoyado mecanizado</option><option>Aplicación fertilizante base</option>
+          <option>Limpieza del lote</option><option>Control malezas pre-siembra</option>
+          <option>Cercado del lote</option><option>Otra labor</option>
+        </select>
+      </div>
+      <div class="fr2">
+        <div class="fg"><div class="fl">Área (ha)</div><input type="text" inputmode="decimal" id="sp-ar" placeholder="0.00"></div>
+        <div class="fg"><div class="fl">Costo ($COP)</div><input type="text" inputmode="numeric" id="sp-co" placeholder="0"></div>
+      </div>
+      <div class="fg"><div class="fl">Estado</div><select id="sp-es"><option>Completada</option><option>En proceso</option><option>Programada</option></select></div>
+      <div class="fg"><div class="fl">Observaciones</div><input type="text" id="sp-ob" placeholder="Notas…"></div>
+      <button class="btn btp" onclick="regLabPrep()">Guardar labor de preparación</button>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">Historial preparación (<span id="cnt-prep">0</span>)</div>
+      <div class="tbl-wrap"><table><thead><tr><th>Fecha</th><th>Lote</th><th>Labor</th><th>Ha</th><th>Costo</th><th>Estado</th><th></th></tr></thead>
+      <tbody id="prep-hist"><tr class="er"><td colspan="7">Sin registros</td></tr></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:8px">Avance por lote</div>
+      <div id="prep-avance"><p style="color:var(--text2);font-size:13px">Sin datos</p></div>
+    </div>
+  </div>
+  <div id="sie-tc-alist" class="tc">
+    <div class="card">
+      <div class="ct" style="margin-bottom:4px">Lista alistamiento — Lote 8</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Guineensis Dorado · 9×9</div>
+      <ul class="chkl" id="checklist">
+        <li onclick="chk(this,'c0')"><div class="chkb"><div class="chkm"></div></div><span class="chkt">Trazado y estacado (9×9 m)</span></li>
+        <li onclick="chk(this,'c1')"><div class="chkb"><div class="chkm"></div></div><span class="chkt">Ahoyado — 40×40×40 cm</span></li>
+        <li onclick="chk(this,'c2')"><div class="chkb"><div class="chkm"></div></div><span class="chkt">Aplicación de cal dolomita</span></li>
+        <li onclick="chk(this,'c3')"><div class="chkb"><div class="chkm"></div></div><span class="chkt">Confirmación llegada material vegetal</span></li>
+        <li onclick="chk(this,'c4')"><div class="chkb"><div class="chkm"></div></div><span class="chkt">Inspección fitosanitaria del material</span></li>
+        <li onclick="chk(this,'c5')"><div class="chkb"><div class="chkm"></div></div><span class="chkt">Fertilizante de base (DAP + Kieserita)</span></li>
+        <li onclick="chk(this,'c6')"><div class="chkb"><div class="chkm"></div></div><span class="chkt">Asignación cuadrilla de siembra</span></li>
+        <li onclick="chk(this,'c7')"><div class="chkb"><div class="chkm"></div></div><span class="chkt">Verificar agua para primer riego</span></li>
+        <li onclick="chk(this,'c8')"><div class="chkb"><div class="chkm"></div></div><span class="chkt">Gestionar pedido material 2.25 ha faltantes (L8)</span></li>
+        <li onclick="chk(this,'c9')"><div class="chkb"><div class="chkm"></div></div><span class="chkt">Drenajes del lote verificados</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CACAO ══ -->
+<div id="page-cacao" class="page">
+  <div class="ph"><div><div class="ptitle">🍫 Cacao</div><div class="psub">Gestión cultivo cacao</div></div><button class="btn bts" onclick="navTo('mas')">← Más</button></div>
+  <div class="trow">
+    <button class="tab active" onclick="stab('cacao','lotes',this)">Lotes (<span id="cnt-cc-lotes">0</span>)</button>
+    <button class="tab" onclick="stab('cacao','labores',this)">Labores (<span id="cnt-cc-lab">0</span>)</button>
+    <button class="tab" onclick="stab('cacao','insumos',this)">Insumos</button>
+    <button class="tab" onclick="stab('cacao','analisis',this);renderCacaoAnalisis()">Análisis</button>
+    <button class="tab" onclick="stab('cacao','tarifas',this)">Tarifas 2026</button>
+  </div>
+  <div id="cacao-tc-lotes" class="tc active">
+    <div class="mrow">
+      <div class="mc"><div class="ml">Lotes</div><div class="mv" id="cc-nlotes">0</div><div class="mu">activos</div></div>
+      <div class="mc"><div class="ml">Hectáreas</div><div class="mv" id="cc-ha">0</div><div class="mu">sembradas</div></div>
+      <div class="mc"><div class="ml">Árboles</div><div class="mv" id="cc-arboles">0</div><div class="mu">totales</div></div>
+      <div class="mc"><div class="ml">Costo total</div><div class="mv" id="cc-costo">$0</div><div class="mu">COP</div></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+      <button class="btn btp bts" onclick="abrirModalCacaoLote(null)">+ Nuevo lote cacao</button>
+    </div>
+    <div class="lgrid" id="cc-lot-cards"><p style="color:var(--text2);font-size:13px">Sin lotes cacao</p></div>
+  </div>
+  <div id="cacao-tc-labores" class="tc">
+    <div class="card">
+      <div class="fg"><div class="fl">Fecha</div><input type="date" id="cc-l-f"></div>
+      <div class="fg"><div class="fl">Lote cacao</div><select id="cc-l-lo"><option value="">Seleccionar…</option></select></div>
+      <div class="fg"><div class="fl">Labor</div>
+        <select id="cc-l-ti" onchange="toggleManual('cc-l-ti','cc-l-ti-m',this)">
+          <option value="">Seleccionar…</option>
+          <optgroup label="Fertilización"><option>Fertilización &lt;100g — $59,28/árbol</option><option>Fertilización hasta 1000g orgánico — $287,89/árbol</option><option>Fertilización 1000-1500g — $107,27/árbol</option></optgroup>
+          <optgroup label="Siembra"><option>Estaquillado punteo — $719,86/estaca</option><option>Ahoyado 35×35cm — $635,17/hoyo</option><option>Siembra especial — $791,85/árbol</option></optgroup>
+          <optgroup label="Mantenimiento"><option>Aplicación tusa 2 anillos — $1.129/árbol</option><option>Plateo 50cm — $433,22/árbol</option><option>Plateo 100cm — $555,65/árbol</option><option>Poda formación 1er año — $659,25/árbol</option><option>Re-injertada en campo — $1.318/árbol</option></optgroup>
+          <option value="__manual__">✏ Escribir manualmente…</option>
+        </select>
+        <input type="text" id="cc-l-ti-m" placeholder="Describe la labor…" style="display:none;margin-top:6px">
+      </div>
+      <div class="fr2">
+        <div class="fg"><div class="fl">Área / árboles</div><input type="text" inputmode="decimal" id="cc-l-ar" placeholder="0"></div>
+        <div class="fg"><div class="fl">Costo ($COP)</div><input type="text" inputmode="numeric" id="cc-l-co" placeholder="0"></div>
+      </div>
+      <div class="fr2">
+        <div class="fg"><div class="fl">Jornales</div><input type="text" inputmode="decimal" id="cc-l-jo" placeholder="1"></div>
+        <div class="fg"><div class="fl">Estado</div><select id="cc-l-es"><option>Completada</option><option>En proceso</option><option>Programada</option></select></div>
+      </div>
+      <div class="fg"><div class="fl">Observaciones</div><input type="text" id="cc-l-ob" placeholder="Notas…"></div>
+      <button class="btn btp" onclick="regLabCacao()">Guardar labor cacao</button>
+    </div>
+    <div class="card">
+      <div class="ch"><span class="ct">Historial (<span id="cnt-cc-lab2">0</span>)</span><button class="btn bts" onclick="expCCLab()">CSV</button></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Fecha</th><th>Lote</th><th>Labor</th><th>Estado (toca)</th><th></th></tr></thead>
+      <tbody id="cc-l-hist"><tr class="er"><td colspan="6">Sin labores</td></tr></tbody></table></div>
+    </div>
+  </div>
+  <div id="cacao-tc-insumos" class="tc">
+    <div class="card">
+      <div class="fg"><div class="fl">Fecha</div><input type="date" id="cc-i-f"></div>
+      <div class="fg"><div class="fl">Lote cacao</div><select id="cc-i-lo"><option value="">Seleccionar…</option></select></div>
+      <div class="fg"><div class="fl">Insumo</div><select id="cc-i-ti"><option>Fertilizante NPK</option><option>Urea</option><option>Abono orgánico</option><option>Fungicida</option><option>Insecticida</option><option>Material de siembra cacao</option><option>Cal dolomita</option><option>Otro</option></select></div>
+      <div class="fr2">
+        <div class="fg"><div class="fl">Cantidad (kg/L)</div><input type="text" inputmode="decimal" id="cc-i-ca" placeholder="0"></div>
+        <div class="fg"><div class="fl">Costo ($COP)</div><input type="text" inputmode="numeric" id="cc-i-co" placeholder="0"></div>
+      </div>
+      <div class="fg"><div class="fl">Observaciones</div><input type="text" id="cc-i-ob" placeholder="Dosis, método…"></div>
+      <button class="btn btp" onclick="regInsCacao()">Guardar insumo cacao</button>
+    </div>
+    <div class="card">
+      <div class="tbl-wrap"><table><thead><tr><th>Fecha</th><th>Lote</th><th>Insumo</th><th>Cant.</th><th>Costo</th><th></th></tr></thead>
+      <tbody id="cc-i-hist"><tr class="er"><td colspan="6">Sin insumos</td></tr></tbody></table></div>
+    </div>
+  </div>
+  <div id="cacao-tc-analisis" class="tc">
+    <!-- KPIs cacao -->
+    <div class="mrow">
+      <div class="mc" style="border-left:3px solid var(--green)"><div class="ml">Labores</div><div class="mv" id="cc-an-nlab">0</div><div class="mu">registradas</div></div>
+      <div class="mc" style="border-left:3px solid var(--amber)"><div class="ml">Costo total</div><div class="mv" id="cc-an-ctot">$0</div><div class="mu">COP</div></div>
+      <div class="mc" style="border-left:3px solid var(--blue)"><div class="ml">Costo/árbol</div><div class="mv" id="cc-an-carbol">$0</div><div class="mu">promedio</div></div>
+      <div class="mc" style="border-left:3px solid var(--purple)"><div class="ml">Árboles</div><div class="mv" id="cc-an-arboles">0</div><div class="mu">totales</div></div>
+    </div>
+    <!-- Estado labores cacao -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">📊 Estado de labores</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
+        <div style="text-align:center;padding:10px;background:var(--gbg);border-radius:var(--r)">
+          <div style="font-size:20px">✅</div>
+          <div style="font-size:18px;font-weight:800;color:var(--green)" id="cc-an-comp">0</div>
+          <div style="font-size:11px;color:var(--text2)">Completadas</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--abg);border-radius:var(--r)">
+          <div style="font-size:20px">🔄</div>
+          <div style="font-size:18px;font-weight:800;color:var(--amber)" id="cc-an-proc">0</div>
+          <div style="font-size:11px;color:var(--text2)">En proceso</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bbg);border-radius:var(--r)">
+          <div style="font-size:20px">📋</div>
+          <div style="font-size:18px;font-weight:800;color:var(--blue)" id="cc-an-prog">0</div>
+          <div style="font-size:11px;color:var(--text2)">Programadas</div>
+        </div>
+      </div>
+    </div>
+    <!-- Costo por tipo de labor -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">💰 Costo por tipo de labor</div>
+      <div id="cc-chart-labor" style="display:flex;flex-direction:column;gap:8px">
+        <p style="color:var(--text2);font-size:13px">Sin datos</p>
+      </div>
+    </div>
+    <!-- Costo por lote cacao -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">🍫 Costo por lote cacao</div>
+      <div id="cc-chart-lote" style="display:flex;flex-direction:column;gap:8px">
+        <p style="color:var(--text2);font-size:13px">Sin lotes</p>
+      </div>
+    </div>
+    <!-- Evolución mensual -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">📅 Costos por mes</div>
+      <div class="chart-wrap" id="cc-chart-mes">
+        <span style="color:var(--text2);font-size:12px;margin:auto">Sin datos</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="cacao-tc-tarifas" class="tc">
+    <div class="card">
+      <div class="ct" style="margin-bottom:4px">Tarifas 2026 — Cacao</div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Factor 2026: ×1.085 sobre 2025</p>
+      <table><thead><tr><th>Labor</th><th>Unidad</th><th style="color:var(--green)">2026 ($)</th></tr></thead><tbody>
+        <tr><td>Fertilización &lt;100g</td><td>Árbol</td><td style="color:var(--green);font-weight:700">$59,28</td></tr>
+        <tr><td>Fertilización orgánica &lt;1000g</td><td>Árbol</td><td style="color:var(--green);font-weight:700">$287,89</td></tr>
+        <tr><td>Estaquillado punteo</td><td>Estaca</td><td style="color:var(--green);font-weight:700">$719,86</td></tr>
+        <tr><td>Ahoyado 35×35cm</td><td>Hoyo</td><td style="color:var(--green);font-weight:700">$635,17</td></tr>
+        <tr><td>Siembra especial</td><td>Árbol</td><td style="color:var(--green);font-weight:700">$791,85</td></tr>
+        <tr><td>Aplicación tusa 2 anillos</td><td>Árbol</td><td style="color:var(--green);font-weight:700">$1.129,19</td></tr>
+        <tr><td>Plateo 50cm radio</td><td>Árbol</td><td style="color:var(--green);font-weight:700">$433,22</td></tr>
+        <tr><td>Plateo 100cm radio</td><td>Árbol</td><td style="color:var(--green);font-weight:700">$555,65</td></tr>
+        <tr><td>Poda formación 1er año</td><td>Árbol</td><td style="color:var(--green);font-weight:700">$659,25</td></tr>
+        <tr><td>Re-injertada en campo</td><td>Árbol</td><td style="color:var(--green);font-weight:700">$1.318,34</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ GERENCIA ══ -->
+<div id="page-gerencia" class="page">
+  <div class="ph">
+    <div><div class="ptitle">📊 Gerencia</div><div class="psub">Supervisión y rendimientos</div></div>
+    <select id="ger-mes" onchange="renderGerencia()" style="width:auto;font-size:13px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border2);background:var(--bg2)"></select>
+  </div>
+
+  <!-- Tabs gerenciales -->
+  <div class="trow">
+    <button class="tab active" onclick="stab('ger','kpi',this)">KPIs</button>
+    <button class="tab" onclick="stab('ger','labores',this)">Labores mes</button>
+    <button class="tab" onclick="stab('ger','costos',this)">Costos</button>
+    <button class="tab" onclick="stab('ger','lotes',this)">Por lote</button>
+    <button class="tab" onclick="stab('ger','maq',this)">Maquinaria</button>
+    <button class="tab" onclick="stab('ger','presup',this)">Presupuesto</button>
+  </div>
+
+  <!-- TAB KPIs -->
+  <div id="ger-tc-kpi" class="tc active">
+    <!-- KPIs principales -->
+    <div class="mrow">
+      <div class="mc" style="border-left:3px solid var(--green)">
+        <div class="ml">Costo total mes</div><div class="mv" id="g-ctot-mes">$0</div>
+        <div class="mu" id="g-ctot-tend" style="margin-top:4px"></div>
+      </div>
+      <div class="mc" style="border-left:3px solid var(--blue)">
+        <div class="ml">Labores ejecutadas</div><div class="mv" id="g-nlab">0</div>
+        <div class="mu" id="g-nlab-pend"></div>
+      </div>
+      <div class="mc" style="border-left:3px solid var(--amber)">
+        <div class="ml">Jornales mes</div><div class="mv" id="g-jorn">0</div>
+        <div class="mu">días trabajados</div>
+      </div>
+      <div class="mc" style="border-left:3px solid var(--purple)">
+        <div class="ml">Ha trabajadas</div><div class="mv" id="g-ha-trab">0</div>
+        <div class="mu">hectáreas en el mes</div>
+      </div>
+    </div>
+    <!-- Semáforo presupuesto -->
+    <div class="card" id="g-semaforo-card">
+      <div class="ct">🚦 Ejecución presupuestal del mes</div>
+      <div id="g-semaforo"></div>
+    </div>
+    <!-- Rendimiento labores vs estándar -->
+    <div class="card">
+      <div class="ct">⚡ Rendimiento labores del mes</div>
+      <div id="g-rend-mes"><p style="color:var(--text2);font-size:13px">Sin datos con área y jornales</p></div>
+    </div>
+    <!-- Lluvia vs requerimiento -->
+    <div class="card">
+      <div class="ct">🌧️ Balance hídrico del mes</div>
+      <div id="g-lluvia-bal"></div>
+    </div>
+    <!-- Top 5 costos -->
+    <div class="card">
+      <div class="ct">💰 Top labores por costo</div>
+      <div id="g-top-costos"></div>
+    </div>
+  </div>
+
+  <!-- TAB LABORES MES -->
+  <div id="ger-tc-labores" class="tc">
+    <div class="card">
+      <div class="ch">
+        <span class="ct">Labores del mes</span>
+        <button class="btn bts" onclick="expGerLabores()">CSV</button>
+      </div>
+      <!-- Resumen por tipo -->
+      <div id="g-lab-resumen" style="margin-bottom:12px"></div>
+      <!-- Detalle -->
+      <div class="tbl-wrap">
+        <table><thead><tr><th>Fecha</th><th>Lote</th><th>Labor</th><th>Ha</th><th>Jornales</th><th>Costo</th><th>Estado</th></tr></thead>
+        <tbody id="g-lab-tabla"><tr class="er"><td colspan="7">Sin labores este mes</td></tr></tbody>
+      </table></div>
+    </div>
+    <!-- Labores pendientes / programadas -->
+    <div class="card">
+      <div class="ct">⏳ Programadas / En proceso</div>
+      <div id="g-lab-pendientes"><p style="color:var(--text2);font-size:13px">Sin labores pendientes</p></div>
+    </div>
+  </div>
+
+  <!-- TAB COSTOS -->
+  <div id="ger-tc-costos" class="tc">
+    <!-- Gráfica barras por semana -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">Evolución costos semana a semana</div>
+      <div id="g-chart-sem" style="height:120px;display:flex;align-items:flex-end;gap:3px">
+        <span style="color:var(--text2);font-size:12px;margin:auto">Sin datos</span>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;font-size:11px;color:var(--text2)">
+        <span>🟢 Labores</span><span>🔵 Maquinaria</span><span>🟡 Insumos</span>
+      </div>
+    </div>
+    <!-- Tabla comparativa mes vs mes anterior -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">Mes actual vs anterior</div>
+      <table><thead><tr><th>Categoría</th><th>Mes ant.</th><th>Este mes</th><th>Variación</th></tr></thead>
+      <tbody id="g-comp-meses"><tr class="er"><td colspan="4">Sin datos comparativos</td></tr></tbody></table>
+    </div>
+    <!-- Distribución por categoría -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">Distribución de costos</div>
+      <div id="g-dist-costos"></div>
+    </div>
+  </div>
+
+  <!-- TAB POR LOTE -->
+  <div id="ger-tc-lotes" class="tc">
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">Costo acumulado por lote</div>
+      <div id="g-lotes-cards" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">Labores por lote este mes</div>
+      <div class="tbl-wrap">
+        <table><thead><tr><th>Lote</th><th>Labores</th><th>Ha</th><th>Costo</th><th>$/ha</th></tr></thead>
+        <tbody id="g-lotes-tabla"><tr class="er"><td colspan="5">Sin datos</td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- TAB MAQUINARIA -->
+  <div id="ger-tc-maq" class="tc">
+    <div class="mrow">
+      <div class="mc"><div class="ml">Horas mes</div><div class="mv" id="g-maq-hrs">0</div><div class="mu">acumuladas</div></div>
+      <div class="mc"><div class="ml">Costo mes</div><div class="mv" id="g-maq-cost">$0</div><div class="mu">COP</div></div>
+      <div class="mc"><div class="ml">Costo/hora</div><div class="mv" id="g-maq-cph">$0</div><div class="mu">promedio</div></div>
+      <div class="mc"><div class="ml">Combustible</div><div class="mv" id="g-maq-gal">0</div><div class="mu">galones</div></div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">Uso por máquina este mes</div>
+      <div id="g-maq-barras" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+    <!-- Alertas mantenimiento -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">🔧 Alertas de mantenimiento</div>
+      <div id="g-mant-alertas"><p style="color:var(--text2);font-size:13px">Sin alertas pendientes</p></div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">Historial maquinaria mes</div>
+      <div class="tbl-wrap">
+        <table><thead><tr><th>Fecha</th><th>Máquina</th><th>Labor</th><th>Hrs</th><th>Costo</th></tr></thead>
+        <tbody id="g-maq-tabla"><tr class="er"><td colspan="5">Sin registros</td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- TAB PRESUPUESTO -->
+  <div id="ger-tc-presup" class="tc">
+    <div class="card">
+      <div class="ct" style="margin-bottom:12px">💼 Presupuesto mensual</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Define el presupuesto para el mes seleccionado. Los datos se guardan localmente.</div>
+      <div class="fg"><div class="fl">Mes</div><input type="month" id="pres-mes" style="font-size:15px"></div>
+      <div class="fg"><div class="fl">Presupuesto labores ($COP)</div><input type="text" inputmode="numeric" id="pres-lab" placeholder="0"></div>
+      <div class="fg"><div class="fl">Presupuesto maquinaria ($COP)</div><input type="text" inputmode="numeric" id="pres-maq" placeholder="0"></div>
+      <div class="fg"><div class="fl">Presupuesto insumos ($COP)</div><input type="text" inputmode="numeric" id="pres-ins" placeholder="0"></div>
+      <div class="fg"><div class="fl">Meta jornales del mes</div><input type="text" inputmode="numeric" id="pres-jorn" placeholder="0"></div>
+      <div class="fg"><div class="fl">Meta ha laboradas</div><input type="text" inputmode="decimal" id="pres-ha" placeholder="0"></div>
+      <button class="btn btp" onclick="guardarPresupuesto()">💾 Guardar presupuesto</button>
+    </div>
+    <!-- Semáforo ejecución -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">📊 Ejecución vs presupuesto</div>
+      <div id="g-pres-ejecucion"><p style="color:var(--text2);font-size:13px">Define un presupuesto para ver la ejecución</p></div>
+    </div>
+    <!-- Historial presupuestos -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">Historial por mes</div>
+      <div id="g-pres-historial"></div>
+    </div>
+    <!-- Botón exportar reporte mensual -->
+    <button class="btn btp" onclick="exportarReporteMes()" style="margin-top:4px">
+      📄 Exportar reporte mensual completo
+    </button>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <button class="bni active" id="bn-resumen" onclick="navTo('resumen')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+    Panel<span class="badge" id="nav-alertas" style="display:none">0</span>
+  </button>
+  <button class="bni" id="bn-gerencia" onclick="navTo('gerencia')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+    Gerencia
+  </button>
+  <button class="bni" id="bn-rapido" onclick="navTo('rapido')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/></svg>
+    Rápido
+  </button>
+  <button class="bni" id="bn-labores" onclick="navTo('labores')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    Labores
+  </button>
+  <button class="bni" id="bn-maquinaria" onclick="navTo('maquinaria')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="11" width="14" height="9" rx="1.5"/><circle cx="6" cy="20" r="2"/><circle cx="13" cy="20" r="2"/><path d="M16 15h3l3-4h-6"/></svg>
+    Maq.
+  </button>
+  <button class="bni" id="bn-mas" onclick="navTo('mas')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="5" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="19" r="1.5" fill="currentColor"/></svg>
+    Más
+  </button>
+</nav>
+</div>
+
+<!-- MODALES -->
+<div class="modal-bg" id="modal-lote-bg" onclick="cerrarModalBg('modal-lote-bg',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-lote-title">Nuevo lote</div>
+    <input type="hidden" id="ml-id">
+    <div class="fg"><div class="fl">Nombre / N° de lote</div><input type="text" id="ml-nombre" placeholder="Ej: Lote 9…"></div>
+    <div class="fr2">
+      <div class="fg"><div class="fl">Hectáreas</div><input type="text" inputmode="decimal" id="ml-ha" placeholder="0.00"></div>
+      <div class="fg"><div class="fl">Palmas</div><input type="text" inputmode="numeric" id="ml-palmas" placeholder="0"></div>
+    </div>
+    <div class="fg"><div class="fl">Material vegetal</div><select id="ml-material"><option>Híbrido Fortuna</option><option>Guineensis Dorado Ecuador</option><option>Híbrido Cirad</option><option>Otro</option></select></div>
+    <div class="fr2">
+      <div class="fg"><div class="fl">Densidad</div><select id="ml-densidad"><option>10×10</option><option>9×9</option><option>9×9×9 (triangular)</option><option>Otra</option></select></div>
+      <div class="fg"><div class="fl">Estado</div><select id="ml-estado"><option>Sembrado 2025</option><option>Sembrado 2026</option><option>Siembra 2026</option><option>Siembra futura</option><option>Parcial</option><option>En preparación</option><option>Disponible</option></select></div>
+    </div>
+    <div class="fg"><div class="fl">Fecha de siembra</div><input type="date" id="ml-fecha"></div>
+    <div class="fg"><div class="fl">Notas</div><input type="text" id="ml-nota" placeholder="Ej: 2 ha pendientes…"></div>
+    <div class="modal-foot">
+      <button class="btn" onclick="cerrarModal('modal-lote-bg')" style="flex:1">Cancelar</button>
+      <button class="btn btp" onclick="guardarLote()" style="flex:2">Guardar lote</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-sie-bg" onclick="cerrarModalBg('modal-sie-bg',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Editar fecha de siembra</div>
+    <input type="hidden" id="ms-id">
+    <div class="fg"><div class="fl">Lote</div><input type="text" id="ms-nombre" readonly style="background:var(--bg3);color:var(--text2)"></div>
+    <div class="fg"><div class="fl">Nueva fecha</div><input type="date" id="ms-fecha"></div>
+    <div class="fg"><div class="fl">Estado</div><select id="ms-estado"><option>Sembrado 2025</option><option>Sembrado 2026</option><option>Siembra 2026</option><option>Siembra futura</option><option>Parcial</option><option>En preparación</option><option>Disponible</option></select></div>
+    <div class="modal-foot">
+      <button class="btn" onclick="cerrarModal('modal-sie-bg')" style="flex:1">Cancelar</button>
+      <button class="btn btp" onclick="guardarSiembra()" style="flex:2">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-sie-futura-bg" onclick="cerrarModalBg('modal-sie-futura-bg',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🌱 Planificar siembra futura</div>
+    <div class="fg"><div class="fl">Lote</div><select id="msf-lo"><option value="">Seleccionar lote…</option></select></div>
+    <div class="fr2">
+      <div class="fg"><div class="fl">Fecha inicio</div><input type="date" id="msf-fecha"></div>
+      <div class="fg"><div class="fl">Ha a sembrar</div><input type="text" inputmode="decimal" id="msf-ha" placeholder="0.00"></div>
+    </div>
+    <div class="fg"><div class="fl">Material vegetal</div><select id="msf-mat"><option>Híbrido Fortuna</option><option>Guineensis Dorado Ecuador</option><option>Híbrido Cirad</option><option>Otro</option></select></div>
+    <div class="fr2">
+      <div class="fg"><div class="fl">Densidad</div><select id="msf-den"><option>10×10</option><option>9×9</option><option>9×9×9</option><option>Otra</option></select></div>
+      <div class="fg"><div class="fl">Estado</div><select id="msf-est"><option>Siembra 2026</option><option>Siembra futura</option><option>En preparación</option></select></div>
+    </div>
+    <div class="fg"><div class="fl">Notas</div><input type="text" id="msf-nota" placeholder="Condiciones, pendientes…"></div>
+    <div class="modal-foot">
+      <button class="btn" onclick="cerrarModal('modal-sie-futura-bg')" style="flex:1">Cancelar</button>
+      <button class="btn btp" onclick="guardarSiembraFutura()" style="flex:2">Guardar plan</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-cc-lote-bg" onclick="cerrarModalBg('modal-cc-lote-bg',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-cc-lote-title">Nuevo lote cacao</div>
+    <input type="hidden" id="cc-ml-id">
+    <div class="fg"><div class="fl">Nombre del lote</div><input type="text" id="cc-ml-nombre" placeholder="Ej: Lote Cacao 1…"></div>
+    <div class="fr2">
+      <div class="fg"><div class="fl">Hectáreas</div><input type="text" inputmode="decimal" id="cc-ml-ha" placeholder="0.00"></div>
+      <div class="fg"><div class="fl">Árboles sembrados</div><input type="text" inputmode="numeric" id="cc-ml-arboles" placeholder="0"></div>
+    </div>
+    <div class="fg"><div class="fl">Variedad / Clon</div>
+      <input type="text" id="cc-ml-material" placeholder="Ej: CCN-51, ICS-95…" list="cc-vars">
+      <datalist id="cc-vars"><option value="CCN-51"><option value="ICS-95"><option value="FTA-2"><option value="Híbrido mejorado"><option value="Trinitario"><option value="Forastero"></datalist>
+    </div>
+    <div class="fr2">
+      <div class="fg"><div class="fl">Densidad (árb/ha)</div><input type="text" inputmode="numeric" id="cc-ml-densidad" placeholder="1000"></div>
+      <div class="fg"><div class="fl">Estado</div><select id="cc-ml-estado"><option>Sembrado 2025</option><option>Sembrado 2026</option><option>Siembra 2026</option><option>Siembra futura</option><option>En preparación</option><option>Disponible</option></select></div>
+    </div>
+    <div class="fg"><div class="fl">Fecha de siembra</div><input type="date" id="cc-ml-fecha"></div>
+    <div class="fg"><div class="fl">Notas</div><input type="text" id="cc-ml-nota" placeholder="Condiciones, pendientes…"></div>
+    <div class="modal-foot">
+      <button class="btn" onclick="cerrarModal('modal-cc-lote-bg')" style="flex:1">Cancelar</button>
+      <button class="btn btp" onclick="guardarLoteCacao()" style="flex:2">Guardar lote</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// AGROYARICO v8 — Motor de datos con Supabase Realtime
+// ══════════════════════════════════════════════════════════════
+
+// ── SUPABASE CONFIG ──────────────────────────────────────────
+const SB_URL = 'https://vhtllyiyfathexppkhqy.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZodGxseWl5ZmF0aGV4cHBraHF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMjUwOTUsImV4cCI6MjA5MTgwMTA5NX0.Nq2ohb31xHebibMVtF1Ta6ouqkBpnVGrmZ6iEwNFsJ8';
+const HEADERS = {
+  'apikey': SB_KEY,
+  'Authorization': 'Bearer ' + SB_KEY,
+  'Content-Type': 'application/json',
+  'Prefer': 'return=representation'
+};
+
+// ── API REST ──────────────────────────────────────────────────
+async function apiGet(tabla, params = '') {
+  const r = await fetch(`${SB_URL}/rest/v1/${tabla}?${params}`, { headers: HEADERS });
+  if (!r.ok) throw new Error((await r.text()).slice(0, 200));
+  const t = await r.text(); return t ? JSON.parse(t) : [];
+}
+async function apiPost(tabla, data) {
+  const r = await fetch(`${SB_URL}/rest/v1/${tabla}`, {
+    method: 'POST', headers: HEADERS, body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error((await r.text()).slice(0, 200));
+  const t = await r.text(); return t ? JSON.parse(t) : [];
+}
+async function apiDelete(tabla, id) {
+  const r = await fetch(`${SB_URL}/rest/v1/${tabla}?id=eq.${id}`, {
+    method: 'DELETE', headers: HEADERS
+  });
+  if (!r.ok) throw new Error((await r.text()).slice(0, 200));
+}
+async function apiUpsert(tabla, data) {
+  const r = await fetch(`${SB_URL}/rest/v1/${tabla}`, {
+    method: 'POST',
+    headers: { ...HEADERS, 'Prefer': 'resolution=merge-duplicates,return=representation' },
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error((await r.text()).slice(0, 200));
+  const t = await r.text(); return t ? JSON.parse(t) : [];
+}
+
+// ── ESTADO GLOBAL ─────────────────────────────────────────────
+const LOTES_DEFAULT = [
+  {id:'L1', nombre:'Lote 1',  ha:8.15,  palmas:937,  material:'Híbrido Fortuna',           densidad:'10×10', estado:'Sembrado 2025', fecha:'2025-09-01', nota:''},
+  {id:'L2', nombre:'Lote 2',  ha:8.94,  palmas:1028, material:'Híbrido Fortuna',           densidad:'10×10', estado:'Sembrado 2025', fecha:'2025-10-01', nota:''},
+  {id:'L3', nombre:'Lote 3',  ha:12.74, palmas:1465, material:'Híbrido Fortuna',           densidad:'10×10', estado:'Sembrado 2025', fecha:'2025-11-01', nota:''},
+  {id:'L4', nombre:'Lote 4',  ha:10.31, palmas:1474, material:'Guineensis Dorado Ecuador', densidad:'9×9',   estado:'Sembrado 2025', fecha:'2025-10-01', nota:''},
+  {id:'L5', nombre:'Lote 5',  ha:17.67, palmas:1767, material:'Híbrido Fortuna',           densidad:'10×10', estado:'Siembra 2026',  fecha:'2026-05-01', nota:''},
+  {id:'L6', nombre:'Lote 6',  ha:6.60,  palmas:660,  material:'Híbrido Fortuna',           densidad:'10×10', estado:'Siembra 2026',  fecha:'2026-06-01', nota:''},
+  {id:'L7', nombre:'Lote 7',  ha:8.34,  palmas:634,  material:'Híbrido Fortuna',           densidad:'10×10', estado:'Parcial',       fecha:'2026-07-01', nota:'Solo 6.34 ha disponibles'},
+  {id:'L8', nombre:'Lote 8',  ha:12.25, palmas:1230, material:'Guineensis Dorado Ecuador', densidad:'9×9',   estado:'Siembra 2026',  fecha:'2026-04-21', nota:'Material para 10 ha · faltan 2.25 ha'},
+  {id:'L14',nombre:'Lote 14', ha:10.51, palmas:750,  material:'Híbrido Fortuna',           densidad:'10×10', estado:'Parcial',       fecha:'2026-08-01', nota:'7.5 ha de 10.51 en siembra 2026'},
+  {id:'L9', nombre:'Lote 9',  ha:0,     palmas:0,    material:'Híbrido Fortuna',           densidad:'10×10', estado:'Disponible',    fecha:'', nota:''},
+  {id:'L10',nombre:'Lote 10', ha:0,     palmas:0,    material:'Híbrido Fortuna',           densidad:'10×10', estado:'Disponible',    fecha:'', nota:''},
+  {id:'L11',nombre:'Lote 11', ha:0,     palmas:0,    material:'Híbrido Fortuna',           densidad:'10×10', estado:'Disponible',    fecha:'', nota:''},
+  {id:'L12',nombre:'Lote 12', ha:0,     palmas:0,    material:'Híbrido Fortuna',           densidad:'10×10', estado:'Disponible',    fecha:'', nota:''},
+  {id:'L13',nombre:'Lote 13', ha:0,     palmas:0,    material:'Híbrido Fortuna',           densidad:'10×10', estado:'Disponible',    fecha:'', nota:''},
+];
+
+let lotes = LOTES_DEFAULT.map(l => ({...l}));
+let lab = [], maq = [], mnt = [], cos = [], ll = [], ins = [];
+
+const KCH = 'ay_chk';
+let ccLotes = []; // Loaded from Supabase (lotes table, id starts with 'CC')
+
+const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const HIST  = [180,120,90,210,340,380,420,390,310,280,220,150];
+const MM_DIA = 5;
+const EST = {
+  'Plateo':1,'Poda sanitaria':1,'Poda de formación':0.8,
+  'Fertilización edáfica':2,'Fertilización foliar':2.5,
+  'Control de malezas (manual)':1.5,'Control de malezas (químico)':2,
+  'Control fitosanitario':1.5,'Siembra':0.5,'Resiembra':0.8,'Drenaje':1.2
+};
+
+// ── MAPPERS ───────────────────────────────────────────────────
+const mLab = r => ({id:r.id, fe:r.fecha, lo:r.lote, ti:r.tipo, tr:r.trabajadores, ar:r.area,
+  jo:r.jornales, co:r.costo, es:r.estado, ob:r.obs, rapido:r.rapido});
+const mMaq = r => ({id:r.id, fe:r.fecha, mq:r.maquina, lb:r.labor, lo:r.lote, hr:r.horas,
+  ar:r.area, ga:r.galones, co:r.costo, op:r.operador, ob:r.obs});
+const mLL  = r => ({id:r.id, fe:r.fecha, mm:Number(r.mm||0), ob:r.obs});
+const mIns = r => ({id:r.id, fe:r.fecha, ti:r.tipo, lo:r.lote, ca:r.cantidad, co:r.costo, ob:r.obs});
+const mCos = r => ({id:r.id, fe:r.fecha, lo:r.lote, ra:r.racimos, kg:r.kg, tHa:r.t_ha, val:r.valor, ob:r.obs});
+const mLote = r => ({id:r.id, nombre:r.nombre, ha:parseFloat(r.ha)||0, palmas:parseInt(r.palmas)||0,
+  material:r.material||'Híbrido Fortuna', densidad:r.densidad||'10×10',
+  estado:r.estado||'Disponible', fecha:r.fecha||'', nota:r.nota||''});
+
+// ── HELPERS ───────────────────────────────────────────────────
+let _tt;
+function toast(msg, tipo='ok') {
+  clearTimeout(_tt);
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.style.background = tipo==='error'?'var(--red)':tipo==='warn'?'var(--amber)':'var(--text)';
+  t.style.color = '#fff';
+  t.classList.add('show');
+  _tt = setTimeout(() => t.classList.remove('show'), tipo==='error'?5000:3000);
+}
+function toastErr(e) {
+  let msg = 'Error al guardar';
+  try { const j = JSON.parse(e.message); msg = j.message||j.error||e.message; } catch { msg = e.message||'Error'; }
+  toast('⚠ ' + msg, 'error');
+  console.error('DB Error:', e);
+}
+function bdg(e) { const m={Completada:'bg',Programada:'bb','En proceso':'ba'}; return `<span class="bdg ${m[e]||'bgr'}">${e||'—'}</span>`; }
+function cop(n) {
+  if (!n || isNaN(n)) return '$0';
+  const v = Number(n);
+  if (v >= 1000000) return '$' + (v/1000000).toFixed(1) + 'M';
+  if (v >= 1000) return '$' + Math.round(v/1000) + 'k';
+  return '$' + v.toLocaleString('es-CO');
+}
+function copF(n) { return '$' + Number(n||0).toLocaleString('es-CO'); }
+function hoy() {
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function gv(id) { return document.getElementById(id)?.value?.trim()||''; }
+function gvf(id) { const v = gv(id).replace(',','.'); return v ? (parseFloat(v)||0) : 0; }
+function set(id, v) { const e = document.getElementById(id); if (e) e.textContent = v; }
+function setF() {
+  ['l-f','m-f','mt-f','c-f','ll-f','i-f','rq-l-f','rq-m-f','rq-ll-f','rq-i-f','cc-l-f','cc-i-f','sp-f']
+    .forEach(id => { const e = document.getElementById(id); if (e && !e.value) e.value = hoy(); });
+}
+function desdeDias(fe) {
+  if (!fe) return 9999;
+  return Math.max(0, Math.floor((new Date() - new Date(fe)) / 86400000));
+}
+function diasEnMes(y, m) { return new Date(+y, +m, 0).getDate(); }
+function reqMes(ym) { const [y,m] = ym.split('-'); return diasEnMes(y,m) * MM_DIA; }
+function mesAnterior(mes) {
+  const [y,m] = mes.split('-');
+  const d = new Date(+y, +m-1, 1);
+  d.setMonth(d.getMonth()-1);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+}
+function getLaborVal(selId, inpId) {
+  const s = document.getElementById(selId);
+  if (s && s.value === '__manual__') return document.getElementById(inpId)?.value?.trim()||'';
+  return s?.value||'';
+}
+function toggleManual(selId, inpId, sel) {
+  const i = document.getElementById(inpId); if (!i) return;
+  i.style.display = sel.value==='__manual__' ? 'block' : 'none';
+  if (sel.value==='__manual__') i.focus();
+}
+function cerrarModal(id) { document.getElementById(id)?.classList.remove('open'); }
+function cerrarModalBg(id, e) { if (e.target === document.getElementById(id)) cerrarModal(id); }
+function syncOn() { document.getElementById('sync-bar').style.display='block'; }
+function syncOff() { document.getElementById('sync-bar').style.display='none'; }
+
+function fillSel(id, addTodos=false) {
+  const s = document.getElementById(id); if (!s) return;
+  const cur = s.value;
+  s.innerHTML = addTodos
+    ? '<option value="Todos los lotes">Todos los lotes</option>'
+    : '<option value="">Seleccionar lote…</option>';
+  lotes.forEach(l => {
+    const o = document.createElement('option');
+    o.value = l.nombre;
+    o.textContent = l.nombre + (l.ha > 0 ? ' (' + l.ha + ' ha)' : '');
+    s.appendChild(o);
+  });
+  if (cur) s.value = cur;
+}
+function fillAll() {
+  ['l-lo','m-lo','c-lo','rq-l-lo','rq-m-lo','sp-lo','msf-lo'].forEach(id => fillSel(id));
+  ['i-lo','rq-i-lo'].forEach(id => fillSel(id, true));
+}
+
+// ── CARGA INICIAL ─────────────────────────────────────────────
+async function cargarTodo() {
+  const lm = document.getElementById('loader-msg');
+  const lo = document.getElementById('loader');
+  if (lo) { lo.style.display='flex'; lo.classList.remove('hide'); }
+
+  try {
+    if (lm) lm.textContent = 'Cargando lotes…';
+    const rL = await apiGet('lotes','order=nombre.asc');
+    if (rL && rL.length) {
+      // Split: CC* = cacao lotes, rest = palma lotes
+      ccLotes = rL.filter(r=>String(r.id).startsWith('CC')).map(r=>({
+        id:r.id, nombre:r.nombre, ha:parseFloat(r.ha)||0,
+        arboles:parseInt(r.palmas)||0, // reuse palmas field for arboles
+        material:r.material||'CCN-51', densidad:parseInt(r.densidad)||1000,
+        estado:r.estado||'Disponible', fecha:r.fecha||'', nota:r.nota||''
+      }));
+      lotes = rL.filter(r=>!String(r.id).startsWith('CC')).map(mLote);
+    } else {
+      if (lm) lm.textContent = 'Inicializando lotes…';
+      for (const l of LOTES_DEFAULT) {
+        try { await apiUpsert('lotes', l); } catch(e) {}
+      }
+    }
+
+    if (lm) lm.textContent = 'Cargando datos…';
+    const [rLab, rMaq, rMnt, rCos, rLL, rIns] = await Promise.all([
+      apiGet('labores',      'order=created_at.desc&limit=500'),
+      apiGet('maquinaria',   'order=created_at.desc&limit=500'),
+      apiGet('mantenimientos','order=created_at.desc&limit=200'),
+      apiGet('cosechas',     'order=created_at.desc&limit=200'),
+      apiGet('lluvias',      'order=created_at.desc&limit=500'),
+      apiGet('insumos',      'order=created_at.desc&limit=500'),
+    ]);
+    lab = rLab.map(mLab);
+    maq = rMaq.map(mMaq);
+    mnt = rMnt.map(r => ({id:r.id,fe:r.fecha,mq:r.maquina,ti:r.tipo,ho:r.horometro,co:r.costo,re:r.responsable,pr:r.proximo,ob:r.obs}));
+    cos = rCos.map(mCos);
+    ll  = rLL.map(mLL);
+    ins = rIns.map(mIns);
+
+    set('sync-status', '☁ Conectado');
+    const ft = document.getElementById('sfoot-txt');
+    if (ft) ft.textContent = '☁ Agroyarico v8 · Supabase';
+
+  } catch(e) {
+    console.error('Error carga:', e);
+    set('sync-status', '⚠ Sin conexión');
+    toast('Sin conexión a la base de datos: ' + e.message, 'error');
+  }
+
+  if (lo) { lo.classList.add('hide'); setTimeout(() => { lo.style.display='none'; }, 500); }
+  fillAll();
+  renderAll();
+  setF();
+  loadChks();
+  iniciarSync();
+}
+
+// ── SYNC AUTOMÁTICO CONFIABLE ─────────────────────────────────
+// Estrategia: poll cada 5s comparando created_at del más reciente
+let _syncTimer = null;
+let _ultimoLab = '', _ultimoLL = '', _ultimoMaq = '', _ultimoIns = '';
+
+async function syncPoll() {
+  try {
+    // Consultar solo el registro más reciente de cada tabla
+    const [nL, nM, nLL, nI] = await Promise.all([
+      apiGet('labores',    'select=id,created_at&order=created_at.desc&limit=1'),
+      apiGet('maquinaria', 'select=id,created_at&order=created_at.desc&limit=1'),
+      apiGet('lluvias',    'select=id,created_at&order=created_at.desc&limit=1'),
+      apiGet('insumos',    'select=id,created_at&order=created_at.desc&limit=1'),
+    ]);
+
+    const nuevoLab = nL[0]?.created_at || '';
+    const nuevoMaq = nM[0]?.created_at || '';
+    const nuevoLL  = nLL[0]?.created_at || '';
+    const nuevoIns = nI[0]?.created_at || '';
+
+    let cambio = false;
+
+    if (nuevoLab !== _ultimoLab) {
+      _ultimoLab = nuevoLab;
+      lab = (await apiGet('labores', 'order=created_at.desc&limit=500')).map(mLab);
+      renderLab(); renderRQRecientes(); renderCCLab(); cambio = true;
+    }
+    if (nuevoMaq !== _ultimoMaq) {
+      _ultimoMaq = nuevoMaq;
+      maq = (await apiGet('maquinaria', 'order=created_at.desc&limit=500')).map(mMaq);
+      renderMaq(); cambio = true;
+    }
+    if (nuevoLL !== _ultimoLL) {
+      _ultimoLL = nuevoLL;
+      ll = (await apiGet('lluvias', 'order=created_at.desc&limit=500')).map(mLL);
+      renderLL(); cambio = true;
+    }
+    if (nuevoIns !== _ultimoIns) {
+      _ultimoIns = nuevoIns;
+      ins = (await apiGet('insumos', 'order=created_at.desc&limit=500')).map(mIns);
+      renderIns(); renderCCIns(); cambio = true;
+    }
+
+    if (cambio) {
+      panel();
+      // Reload cacao lotes silently (shared between users)
+      apiGet('lotes','order=nombre.asc').then(r=>{
+        if(r&&r.length){
+          ccLotes=r.filter(x=>String(x.id).startsWith('CC')).map(x=>({
+            id:x.id,nombre:x.nombre,ha:parseFloat(x.ha)||0,arboles:parseInt(x.palmas)||0,
+            material:x.material||'CCN-51',densidad:parseInt(x.densidad)||1000,
+            estado:x.estado||'Disponible',fecha:x.fecha||'',nota:x.nota||''
+          }));
+        }
+      }).catch(()=>{});
+      renderCacaoLotes();
+      // Indicar actualización
+      const live = document.getElementById('live-txt');
+      if (live) { live.textContent='↻ Nuevo'; setTimeout(() => live.textContent='En vivo', 2000); }
+      set('sync-status', '☁ Actualizado · ' + new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}));
+    }
+
+    // Marcar IDs iniciales en primera carga
+    if (!_ultimoLab && nL[0]) _ultimoLab = nL[0].created_at;
+    if (!_ultimoMaq && nM[0]) _ultimoMaq = nM[0].created_at;
+    if (!_ultimoLL  && nLL[0]) _ultimoLL  = nLL[0].created_at;
+    if (!_ultimoIns && nI[0]) _ultimoIns = nI[0].created_at;
+
+  } catch(e) {
+    // Ignorar errores de red silenciosamente
+  }
+}
+
+function iniciarSync() {
+  // Capturar estado inicial
+  if (lab.length) _ultimoLab = lab[0]?.id ? String(lab[0].id) : '';
+  if (maq.length) _ultimoMaq = maq[0]?.id ? String(maq[0].id) : '';
+  if (ll.length)  _ultimoLL  = ll[0]?.id  ? String(ll[0].id)  : '';
+  if (ins.length) _ultimoIns = ins[0]?.id  ? String(ins[0].id)  : '';
+
+  // Usar created_at como comparador más confiable
+  apiGet('labores','select=created_at&order=created_at.desc&limit=1').then(r=>{if(r[0])_ultimoLab=r[0].created_at;}).catch(()=>{});
+  apiGet('maquinaria','select=created_at&order=created_at.desc&limit=1').then(r=>{if(r[0])_ultimoMaq=r[0].created_at;}).catch(()=>{});
+  apiGet('lluvias','select=created_at&order=created_at.desc&limit=1').then(r=>{if(r[0])_ultimoLL=r[0].created_at;}).catch(()=>{});
+  apiGet('insumos','select=created_at&order=created_at.desc&limit=1').then(r=>{if(r[0])_ultimoIns=r[0].created_at;}).catch(()=>{});
+
+  // Poll cada 5 segundos
+  if (_syncTimer) clearInterval(_syncTimer);
+  _syncTimer = setInterval(syncPoll, 5000);
+  // Also do an initial cacao lotes load
+  recargarCacao();
+
+  // Sincronizar al volver a la app
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      setTimeout(syncPoll, 500);
+    }
+  });
+}
+
+// ── NAVEGACIÓN ────────────────────────────────────────────────
+let paginaActual = 'resumen';
+function navTo(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.bni').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+id)?.classList.add('active');
+  document.getElementById('bn-'+id)?.classList.add('active');
+  paginaActual = id;
+  const m = document.getElementById('main');
+  if (m) m.scrollTop = 0;
+
+  // Recargar datos frescos al navegar - garantiza ver datos actuales
+  const recargas = {
+    resumen:    () => _recargarTodo(['lab','maq','ll','ins']),
+    rapido:     () => { fillAll(); renderRQRecientes(); _recargarTodo(['lab','ll','ins']); },
+    lotes:      () => _recargarLotes(),
+    labores:    () => { fillSel('l-lo'); _recargarTodo(['lab']); },
+    maquinaria: () => { fillSel('m-lo'); _recargarTodo(['maq']); },
+    cosecha:    () => { fillSel('c-lo'); _recargarTodo(['cos']); },
+    lluvia:     () => _recargarTodo(['ll']),
+    insumos:    () => { fillSel('i-lo',true); _recargarTodo(['ins']); },
+    siembra:    () => { _recargarLotes(); fillSel('sp-lo'); },
+    cacao:      () => recargarCacao(),
+    gerencia:   () => { inicializarMesSelector(); renderGerencia(); },
+    mas:        () => {},
+  };
+  if (recargas[id]) recargas[id]();
+}
+
+async function _recargarTodo(tablas) {
+  try {
+    if (tablas.includes('lab')) lab = (await apiGet('labores','order=created_at.desc&limit=500')).map(mLab);
+    if (tablas.includes('maq')) maq = (await apiGet('maquinaria','order=created_at.desc&limit=500')).map(mMaq);
+    if (tablas.includes('ll'))  ll  = (await apiGet('lluvias','order=created_at.desc&limit=500')).map(mLL);
+    if (tablas.includes('ins')) ins = (await apiGet('insumos','order=created_at.desc&limit=500')).map(mIns);
+    if (tablas.includes('cos')) cos = (await apiGet('cosechas','order=created_at.desc&limit=200')).map(mCos);
+    renderAll();
+  } catch(e) { console.warn('Recarga:', e.message); }
+}
+
+async function _recargarLotes() {
+  try {
+    const r = await apiGet('lotes','order=nombre.asc');
+    if (r && r.length) lotes = r.map(mLote);
+    fillAll(); renderAll();
+  } catch(e) { console.warn('Recarga lotes:', e.message); }
+}
+
+function stab(pg, tb, el) {
+  document.querySelectorAll(`[id^="${pg}-tc-"]`).forEach(t => t.classList.remove('active'));
+  el.closest('.trow')?.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`${pg}-tc-${tb}`)?.classList.add('active');
+  el.classList.add('active');
+  if (pg==='labores' && tb==='rend') renderRend();
+  if (pg==='maq' && tb==='rend') renderMaqRend();
+}
+
+function renderAll() {
+  panel(); renderLots(); renderLab(); renderMaq(); renderMnt();
+  renderCos(); renderLL(); renderIns(); renderSiembra();
+  renderRQRecientes(); renderCacaoLotes(); renderCCLab(); renderCCIns();
+  inicializarMesSelector();
+}
+// Reload cacao lotes from Supabase (shared between users)
+async function recargarCacao() {
+  try {
+    const r = await apiGet('lotes','order=nombre.asc');
+    if (r && r.length) {
+      ccLotes = r.filter(x=>String(x.id).startsWith('CC')).map(x=>({
+        id:x.id, nombre:x.nombre, ha:parseFloat(x.ha)||0,
+        arboles:parseInt(x.palmas)||0, material:x.material||'CCN-51',
+        densidad:parseInt(x.densidad)||1000, estado:x.estado||'Disponible',
+        fecha:x.fecha||'', nota:x.nota||''
+      }));
+    }
+  } catch(e) {}
+  renderCacaoLotes(); renderCCLab(); renderCCIns();
+}
+
+// ── PANEL ─────────────────────────────────────────────────────
+function panel() {
+  const labP = lab.filter(r => !String(r.ob||'').startsWith('[cacao]'));
+  const insP = ins.filter(r => !String(r.ob||'').startsWith('[cacao]'));
+  const cl = labP.reduce((s,r) => s+Number(r.co||0), 0);
+  const cm = maq.reduce((s,r) => s+Number(r.co||0), 0);
+  const ci = insP.reduce((s,r) => s+Number(r.co||0), 0);
+
+  set('p-lab', labP.length);
+  set('p-maq', maq.length);
+  set('p-ctot', cop(cl+cm+ci));
+  set('p-cl', cop(cl)); set('p-cm', cop(cm)); set('p-ci', cop(ci));
+
+  // Estado labores
+  set('p-lab-comp', labP.filter(r=>r.es==='Completada').length);
+  set('p-lab-proc', labP.filter(r=>r.es==='En proceso').length);
+  set('p-lab-prog', labP.filter(r=>r.es==='Programada').length);
+
+  // Saludo dinámico
+  const hora = new Date().getHours();
+  const saludo = hora<12?'Buenos días ☀️':hora<18?'Buenas tardes 🌤️':'Buenas noches 🌙';
+  set('p-saludo', saludo);
+  const fd = document.getElementById('p-fecha-hoy');
+  if(fd) {
+    const d=new Date();
+    const dias=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    fd.textContent=dias[d.getDay()]+' '+d.getDate()+' de '+MESES[d.getMonth()]+' '+d.getFullYear();
+  }
+
+  // Lluvia mes
+  const mesA = hoy().slice(0,7);
+  // Deduplicar lluvia por día antes de sumar el mes
+  const llDiaMap={};ll.filter(r=>r.fe).forEach(r=>{if(llDiaMap[r.fe]===undefined)llDiaMap[r.fe]=Number(r.mm||0);});
+  const mmMes=Object.entries(llDiaMap).filter(([fe])=>fe.startsWith(mesA)).reduce((s,[,mm])=>s+mm,0);
+  const diasH = new Date().getDate();
+  const reqH = diasH * MM_DIA;
+  const bal = Math.round(mmMes - reqH);
+  set('p-mm-mes', Math.round(mmMes));
+  const ie = document.getElementById('p-mm-mes-imp');
+  if (ie) ie.textContent = 'mm · ' + (bal>=0 ? '✅ +'+bal+' mm' : '⚠ '+bal+' mm');
+
+  // Gráfica costos semanales
+  const semanas = {};
+  const addSem = (arr, tipo) => arr.forEach(r => {
+    if (!r.fe || !Number(r.co||0)) return;
+    const d = new Date(r.fe); const day = d.getDay()||7;
+    const mon = new Date(d); mon.setDate(d.getDate()-day+1);
+    const k = mon.getFullYear()+'-'+String(mon.getMonth()+1).padStart(2,'0')+'-'+String(mon.getDate()).padStart(2,'0');
+    if (!semanas[k]) semanas[k] = {l:0,m:0,i:0};
+    semanas[k][tipo] += Number(r.co||0);
+  });
+  addSem(labP,'l'); addSem(maq,'m'); addSem(insP,'i');
+  const sk = Object.keys(semanas).sort().slice(-8);
+  const cSem = document.getElementById('chart-costos-semana');
+  if (cSem) {
+    if (!sk.length) {
+      cSem.innerHTML='<span style="color:var(--text2);font-size:12px;margin:auto">Sin costos aún</span>';
+    } else {
+      const tots = sk.map(k=>semanas[k].l+semanas[k].m+semanas[k].i);
+      const mx = Math.max(...tots, 1); const H = 100;
+      cSem.innerHTML = sk.map((k,i) => {
+        const s = semanas[k]; const tot = s.l+s.m+s.i;
+        const hl = Math.max(Math.round(s.l/mx*H),0);
+        const hm = Math.max(Math.round(s.m/mx*H),0);
+        const hi = Math.max(Math.round(s.i/mx*H),0);
+        const isLast = i===sk.length-1;
+        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0">
+          <div style="font-size:8px;color:var(--text2);margin-bottom:2px">${tot?cop(tot):''}</div>
+          <div style="width:100%;display:flex;flex-direction:column;justify-content:flex-end;height:${H}px;gap:1px">
+            ${hi?`<div style="width:100%;height:${hi}px;background:var(--amber);border-radius:2px 2px 0 0"></div>`:''}
+            ${hm?`<div style="width:100%;height:${hm}px;background:var(--blue)"></div>`:''}
+            ${hl?`<div style="width:100%;height:${hl}px;background:var(--green);${!hi&&!hm?'border-radius:2px 2px 0 0':''}"></div>`:''}
+            ${!tot?`<div style="width:100%;height:2px;background:var(--border)"></div>`:''}
+          </div>
+          <div style="font-size:8px;color:${isLast?'var(--green)':'var(--text3)'};font-weight:${isLast?700:400};margin-top:2px">${k.slice(5)}</div>
+        </div>`;
+      }).join('');
+      const tr = document.getElementById('p-trend');
+      if (tr && tots.length>=2) {
+        const ult=tots[tots.length-1]; const ant=tots[tots.length-2]||1;
+        const pct=Math.round((ult-ant)/ant*100);
+        tr.textContent = pct>0?'↑ +'+pct+'%':pct<0?'↓ '+pct+'%':'→ igual';
+        tr.style.color = pct>30?'var(--red)':pct<-10?'var(--green)':'var(--text2)';
+      }
+    }
+  }
+
+  // Lluvia 14 días
+  const cLL = document.getElementById('chart-lluvia-panel');
+  if (cLL) {
+    const dias14 = [];
+    for (let i=13;i>=0;i--) {
+      const d=new Date(); d.setDate(d.getDate()-i);
+      dias14.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'));
+    }
+    const llM = {};
+    ll.forEach(r => { if(r.fe) llM[r.fe]=(llM[r.fe]||0)+Number(r.mm||0); });
+    const mxLL = Math.max(...dias14.map(d=>llM[d]||0), MM_DIA*2, 1);
+    const H2 = 70;
+    cLL.innerHTML = dias14.map((d,i) => {
+      const mm=llM[d]||0; const h=Math.max(Math.round(mm/mxLL*H2),mm>0?2:0);
+      const color=mm>=MM_DIA?'var(--blue)':mm>0?'var(--amber)':'var(--border)';
+      const isToday=d===hoy();
+      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0">
+        <div style="width:100%;display:flex;flex-direction:column;justify-content:flex-end;height:${H2}px">
+          <div style="width:100%;height:${h||2}px;background:${color};border-radius:2px 2px 0 0;${isToday?'outline:2px solid var(--green)':''}"></div>
+        </div>
+        <div style="font-size:8px;color:${isToday?'var(--green)':'var(--text3)'};font-weight:${isToday?700:400};margin-top:2px">${d.slice(8)}</div>
+      </div>`;
+    }).join('');
+    const est=document.getElementById('p-ll-estado');
+    if (est) est.innerHTML = !ll.length?'':bal>=0?'<span style="color:var(--green)">✅ OK</span>':'<span style="color:var(--amber)">⚠ Déficit</span>';
+    const balEl=document.getElementById('p-ll-bal');
+    if (balEl) balEl.textContent = ll.length?Math.round(mmMes)+' mm / '+reqH+' mm req.':'';
+  }
+
+  // Distribución costos
+  const dist = document.getElementById('chart-dist');
+  if (dist) {
+    const total = cl+cm+ci;
+    if (!total) dist.innerHTML='<p style="color:var(--text2);font-size:12px">Sin costos</p>';
+    else {
+      const cats=[{l:'Labores',v:cl,c:'var(--green)'},{l:'Maquinaria',v:cm,c:'var(--blue)'},{l:'Insumos',v:ci,c:'var(--amber)'}].filter(x=>x.v>0);
+      dist.innerHTML = cats.map(x=>{
+        const pct=Math.round(x.v/total*100);
+        return `<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>${x.l}</span><span style="font-weight:700;color:${x.c}">${pct}%</span></div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${x.c}"></div></div></div>`;
+      }).join('');
+    }
+  }
+
+  // Progreso siembra
+  const sieP=document.getElementById('p-sie-progress');
+  if (sieP) {
+    const haTotal=lotes.filter(l=>l.ha>0).reduce((s,l)=>s+l.ha,0);
+    const haSem=lotes.filter(l=>l.estado.includes('Sembrado')&&l.ha>0).reduce((s,l)=>s+l.ha,0);
+    const pct=haTotal>0?Math.round(haSem/haTotal*100):0;
+    sieP.innerHTML=`<div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:var(--green)"></div></div>`;
+    set('p-sie-txt',pct+'% sembrado · '+haSem.toFixed(0)+' / '+haTotal.toFixed(0)+' ha');
+  }
+
+  // Costo/ha
+  _renderCHPanel();
+
+  // Actividad reciente
+  const evs = [];
+  labP.slice(0,5).forEach(r=>evs.push({fe:r.fe,ico:'👷',txt:`${r.ti||'Labor'} — ${r.lo||'—'}`}));
+  maq.slice(0,3).forEach(r=>evs.push({fe:r.fe,ico:'🚜',txt:`${r.mq||'Máquina'} — ${r.lo||'—'}`}));
+  ll.slice(0,4).forEach(r=>evs.push({fe:r.fe,ico:'🌧️',txt:`Lluvia ${r.mm} mm`}));
+  insP.slice(0,3).forEach(r=>evs.push({fe:r.fe,ico:'🧴',txt:`${r.ti||'Insumo'} — ${r.lo||'—'}`}));
+  evs.sort((a,b)=>(b.fe||'').localeCompare(a.fe||''));
+  const al=document.getElementById('actividad-lista');
+  if (al) al.innerHTML=evs.length
+    ?evs.slice(0,10).map(e=>{const d=desdeDias(e.fe);const t=d===0?'Hoy':d===1?'Ayer':d+'d';return`<div class="act-item"><div class="act-ico">${e.ico}</div><span style="flex:1">${e.txt}</span><span class="act-time">${t}</span></div>`;}).join('')
+    :'<p style="color:var(--text2);font-size:13px">Sin actividad</p>';
+
+  renderAlertas();
+}
+
+// ── ALERTAS ───────────────────────────────────────────────────
+function renderAlertas() {
+  const a = [];
+  const ulLL = ll.length ? ll[0].fe : '';
+  if (desdeDias(ulLL)>7) a.push({t:'a',i:'🌧️',titulo:'Sin lluvia hace '+desdeDias(ulLL)+' días',desc:'Registra diariamente.'});
+  const uf=[...lab.map(r=>r.fe),...maq.map(r=>r.fe)].filter(Boolean).sort().reverse();
+  if (desdeDias(uf[0])>5 && (lab.length||maq.length))
+    a.push({t:'a',i:'📋',titulo:'Sin actividad hace '+desdeDias(uf[0])+' días',desc:'No hay registros desde '+(uf[0]||'nunca')+'.'});
+  const mesA=hoy().slice(0,7); const diasH=new Date().getDate(); const reqH=diasH*MM_DIA;
+  const llM=ll.filter(r=>r.fe&&r.fe.startsWith(mesA)).reduce((s,r)=>s+Number(r.mm||0),0);
+  const def=reqH-llM;
+  if (ll.length&&def>50) a.push({t:'r',i:'💧',titulo:'Déficit hídrico grave: '+Math.round(def)+' mm',desc:'Registrado: '+Math.round(llM)+' mm / Req: '+reqH+' mm. Evaluar riego.'});
+  else if (ll.length&&def>20) a.push({t:'a',i:'💧',titulo:'Déficit hídrico: '+Math.round(def)+' mm',desc:'Palma requiere 5mm/día.'});
+  const nav=document.getElementById('nav-alertas');
+  if (nav) { nav.textContent=a.length; nav.style.display=a.length?'':'none'; }
+  const ap=document.getElementById('alertas-panel');
+  if (ap) ap.innerHTML=a.map(x=>`<div class="alt alt-${x.t}"><div><div class="alt-title">${x.i} ${x.titulo}</div><div class="alt-desc">${x.desc}</div></div></div>`).join('');
+}
+
+// ── COSTO/HA ──────────────────────────────────────────────────
+function _calcCXH() {
+  const g = {};
+  lab.filter(r=>!String(r.ob||'').startsWith('[cacao]')).forEach(r=>{
+    if (!r.lo||r.lo==='Todos los lotes') return;
+    if (!g[r.lo]) g[r.lo]={cl:0,cm:0};
+    g[r.lo].cl += Number(r.co||0);
+  });
+  maq.forEach(r=>{
+    if (!r.lo||r.lo==='—') return;
+    if (!g[r.lo]) g[r.lo]={cl:0,cm:0};
+    g[r.lo].cm += Number(r.co||0);
+  });
+  return g;
+}
+function _renderCHPanel() {
+  const g=_calcCXH(); const el=document.getElementById('cost-ha-panel'); if(!el) return;
+  const e=Object.entries(g).filter(([lo])=>lotes.find(l=>l.nombre===lo));
+  if (!e.length) { el.innerHTML='<p style="color:var(--text2);font-size:13px;grid-column:1/-1">Registra labores por lote</p>'; return; }
+  el.innerHTML=e.map(([lo,d])=>{
+    const lot=lotes.find(l=>l.nombre===lo); const ha=lot&&lot.ha>0?lot.ha:1;
+    const tot=d.cl+d.cm; const cph=tot/ha;
+    const c=cph>5000000?'var(--red)':cph>3000000?'var(--amber)':'var(--green)';
+    return `<div class="cost-ha-card"><div class="cost-ha-lote">${lo}</div><div class="cost-ha-val" style="color:${c}">${cop(cph)}/ha</div><div class="cost-ha-sub">${cop(tot)} · ${ha} ha</div></div>`;
+  }).join('');
+}
+function _renderCHLotes() {
+  const g=_calcCXH(); const tb=document.getElementById('costo-ha-tabla'); if(!tb) return;
+  tb.innerHTML=lotes.map(l=>{
+    const d=g[l.nombre]||{cl:0,cm:0}; const tot=d.cl+d.cm; const cph=l.ha?tot/l.ha:0;
+    const c=cph>5000000?'var(--red)':cph>3000000?'var(--amber)':cph>0?'var(--green)':'var(--text2)';
+    return `<tr><td><strong>${l.nombre}</strong></td><td>${l.ha||'—'}</td><td>${cop(d.cl)}</td><td>${cop(d.cm)}</td><td style="font-weight:700;color:${c}">${cph>0?cop(cph):'—'}</td></tr>`;
+  }).join('')||'<tr class="er"><td colspan="5">Sin datos</td></tr>';
+}
+
+// ── LOTES ─────────────────────────────────────────────────────
+function renderLots() {
+  const g=document.getElementById('lot-cards'); if(!g) return;
+  if (!lotes.length) { g.innerHTML='<p style="color:var(--text2)">Sin lotes.</p>'; return; }
+  g.innerHTML=lotes.map(l=>{
+    const est=l.estado||'';
+    const cls=est.includes('Sembrado')?'bg':est.includes('Siembra')||est.includes('Parcial')||est.includes('preparación')?'ba':'bgr';
+    return `<div class="lcard">
+      <div class="ln">${l.nombre}</div>
+      <div class="ld">${l.ha>0?'📐 '+l.ha+' ha':'📐 —'}</div>
+      <div class="ld">${l.palmas>0?'🌴 '+l.palmas.toLocaleString('es-CO')+' palmas':'🌴 Sin palmas'}</div>
+      <div class="ld" style="font-size:11px">${l.material} · ${l.densidad}</div>
+      ${l.fecha?`<div class="ld" style="font-size:11px">📅 ${l.fecha.slice(0,7)}</div>`:''}
+      <div style="margin-top:6px"><span class="bdg ${cls}">${l.estado}</span></div>
+      ${l.nota?`<div style="font-size:11px;color:var(--amber);margin-top:4px">⚠ ${l.nota}</div>`:''}
+      <div class="lcard-actions">
+        <button class="btn bts" style="flex:1;background:var(--gbg);color:var(--gtx);border-color:rgba(26,138,58,.3)" onclick="abrirModalLote('${l.id}')">✏ Editar</button>
+        <button class="btn bts btd" onclick="eliminarLote('${l.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+  _renderCHLotes();
+}
+function abrirModalLote(id) {
+  const el=id?'Editar':'Nuevo lote';
+  document.getElementById('modal-lote-title').textContent=el;
+  document.getElementById('ml-id').value=id||'';
+  if (id) {
+    const l=lotes.find(x=>x.id===id); if(!l) return;
+    document.getElementById('ml-nombre').value=l.nombre;
+    document.getElementById('ml-ha').value=l.ha;
+    document.getElementById('ml-palmas').value=l.palmas||0;
+    document.getElementById('ml-material').value=l.material;
+    document.getElementById('ml-densidad').value=l.densidad;
+    document.getElementById('ml-estado').value=l.estado;
+    document.getElementById('ml-fecha').value=l.fecha||'';
+    document.getElementById('ml-nota').value=l.nota||'';
+  } else {
+    ['ml-nombre','ml-ha','ml-palmas','ml-nota'].forEach(x=>{const e=document.getElementById(x);if(e)e.value='';});
+    const fe=document.getElementById('ml-fecha'); if(fe) fe.value=hoy();
+    const es=document.getElementById('ml-estado'); if(es) es.value='Siembra 2026';
+  }
+  document.getElementById('modal-lote-bg').classList.add('open');
+}
+async function guardarLote() {
+  const nombre=gv('ml-nombre'); if(!nombre){toast('Ingresa un nombre','warn');return;}
+  const existId=gv('ml-id');
+  const dat={id:existId||('L'+Date.now()),nombre,ha:gvf('ml-ha'),palmas:parseInt(gv('ml-palmas'))||0,
+    material:gv('ml-material'),densidad:gv('ml-densidad'),estado:gv('ml-estado'),
+    fecha:gv('ml-fecha'),nota:gv('ml-nota')};
+  syncOn();
+  try {
+    await apiUpsert('lotes',dat);
+    if (existId) { const l=lotes.find(x=>x.id===existId); if(l) Object.assign(l,dat); }
+    else lotes.push(dat);
+    fillAll(); renderLots(); renderSiembra(); cerrarModal('modal-lote-bg');
+    toast(existId?'✓ Lote actualizado':'✓ Lote agregado');
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+async function eliminarLote(id) {
+  if (!confirm('¿Eliminar este lote?')) return;
+  syncOn();
+  try {
+    await apiDelete('lotes',id);
+    lotes=lotes.filter(l=>l.id!==id); fillAll(); renderLots(); renderSiembra(); toast('Lote eliminado');
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+
+// ── SIEMBRA ───────────────────────────────────────────────────
+const LABORES_PREP=['Subsolado','Rastrillado','Nivelación','Apertura de drenajes','Aplicación de cal / enmienda','Trazado y estacado','Ahoyado manual','Ahoyado mecanizado','Aplicación fertilizante base','Limpieza del lote','Control malezas pre-siembra','Cercado del lote','Otra labor'];
+function labsPrep() { return lab.filter(r=>LABORES_PREP.includes(r.ti)); }
+
+function renderSiembra() {
+  const fut=lotes.filter(l=>!l.estado.includes('Sembrado 2025')&&l.ha>0);
+  const disp=lotes.filter(l=>l.estado==='Disponible'||l.estado==='Siembra futura');
+  set('sie-ha',fut.reduce((s,l)=>s+l.ha,0).toFixed(2));
+  set('sie-disp',disp.length);
+  const prep=labsPrep(); set('sie-prep',prep.length);
+  const con=fut.filter(l=>l.fecha).sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  set('sie-prox',con.length?con[0].nombre+' · '+con[0].fecha.slice(0,7):'—');
+  const tb=document.getElementById('sie-tabla'); if(!tb) return;
+  tb.innerHTML=lotes.map(l=>{
+    const cls=l.estado.includes('Sembrado')?'bg':l.estado.includes('Siembra')||l.estado.includes('Parcial')?'ba':'bgr';
+    return `<tr><td><strong>${l.nombre}</strong></td><td>${l.ha||'—'}</td><td style="font-size:11px">${(l.material||'').split(' ')[0]}</td><td style="font-size:11px">${l.fecha?l.fecha.slice(0,7):'—'}</td><td><span class="bdg ${cls}" style="font-size:10px">${l.estado}</span></td><td><button class="btn bts" style="padding:4px 8px;font-size:12px" onclick="abrirModalSie('${l.id}')">✏</button></td></tr>`;
+  }).join('')||'<tr class="er"><td colspan="6">Sin lotes</td></tr>';
+  _renderLabPreps();
+  fillSel('sp-lo'); fillSel('msf-lo');
+}
+function _renderLabPreps() {
+  const prep=labsPrep(); set('cnt-prep',prep.length);
+  const tb=document.getElementById('prep-hist'); if(!tb) return;
+  tb.innerHTML=prep.length?prep.map(r=>`<tr><td>${r.fe?r.fe.slice(5):''}</td><td>${r.lo||'—'}</td><td style="font-size:11px">${(r.ti||'').slice(0,18)}</td><td>${r.ar||'—'}</td><td>${cop(r.co)}</td><td>${bdg(r.es)}</td><td><button class="dbtn" onclick="delL(${r.id})">×</button></td></tr>`).join(''):'<tr class="er"><td colspan="7">Sin labores</td></tr>';
+  const av=document.getElementById('prep-avance'); if(!av) return;
+  const g={};prep.forEach(r=>{if(!r.lo)return;if(!g[r.lo])g[r.lo]={n:0,ha:0,co:0};g[r.lo].n++;g[r.lo].ha+=Number(r.ar||0);g[r.lo].co+=Number(r.co||0);});
+  av.innerHTML=Object.entries(g).map(([lo,d])=>`<div style="padding:10px;background:var(--bg3);border-radius:8px;margin-bottom:8px"><div style="font-weight:700;font-size:13px;margin-bottom:3px">${lo}</div><div style="font-size:12px;color:var(--text2)">${d.n} labores · ${d.ha.toFixed(1)} ha · ${cop(d.co)}</div></div>`).join('')||'<p style="color:var(--text2);font-size:13px">Sin datos</p>';
+}
+async function regLabPrep() {
+  const fe=gv('sp-f'),lo=gv('sp-lo'),ti=gv('sp-ti');
+  if(!fe||!lo||!ti){toast('Completa fecha, lote y labor','warn');return;}
+  syncOn();
+  try {
+    const rows=await apiPost('labores',{fecha:fe,lote:lo,tipo:ti,area:gvf('sp-ar')||null,costo:gvf('sp-co')||null,estado:gv('sp-es'),obs:gv('sp-ob')||null,rapido:false});
+    if (!rows||!rows[0]) throw new Error('Sin respuesta');
+    lab.unshift(mLab(rows[0]));
+    _renderLabPreps(); panel(); toast('✓ Labor de preparación guardada');
+    ['sp-ar','sp-co','sp-ob'].forEach(i=>{const e=document.getElementById(i);if(e)e.value='';});
+    const lo_=document.getElementById('sp-lo'); if(lo_) lo_.value='';
+    const ti_=document.getElementById('sp-ti'); if(ti_) ti_.value='';
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+function abrirModalSie(id) {
+  const l=lotes.find(x=>x.id===id); if(!l) return;
+  document.getElementById('ms-id').value=id;
+  document.getElementById('ms-nombre').value=l.nombre;
+  document.getElementById('ms-fecha').value=l.fecha||'';
+  document.getElementById('ms-estado').value=l.estado;
+  document.getElementById('modal-sie-bg').classList.add('open');
+}
+async function guardarSiembra() {
+  const id=gv('ms-id'); const l=lotes.find(x=>x.id===id); if(!l) return;
+  l.fecha=gv('ms-fecha'); l.estado=gv('ms-estado');
+  syncOn();
+  try {
+    await apiUpsert('lotes',{id:l.id,nombre:l.nombre,ha:l.ha,palmas:l.palmas,material:l.material,densidad:l.densidad,estado:l.estado,fecha:l.fecha,nota:l.nota});
+    renderSiembra(); renderLots(); cerrarModal('modal-sie-bg'); toast('✓ Fecha actualizada');
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+function abrirModalSieFutura() {
+  fillSel('msf-lo');
+  ['msf-ha','msf-nota','msf-fecha'].forEach(i=>{const e=document.getElementById(i);if(e)e.value='';});
+  document.getElementById('modal-sie-futura-bg').classList.add('open');
+}
+async function guardarSiembraFutura() {
+  const nom=gv('msf-lo'); if(!nom){toast('Selecciona un lote','warn');return;}
+  const l=lotes.find(x=>x.nombre===nom); if(!l) return;
+  const ha=gvf('msf-ha'); if(ha>0) l.ha=ha;
+  l.fecha=gv('msf-fecha'); l.estado=gv('msf-est'); l.material=gv('msf-mat'); l.densidad=gv('msf-den'); l.nota=gv('msf-nota')||l.nota;
+  if (ha>0) { const ph=l.densidad==='9×9'?123:100; l.palmas=Math.round(ha*ph); }
+  syncOn();
+  try {
+    await apiUpsert('lotes',{id:l.id,nombre:l.nombre,ha:l.ha,palmas:l.palmas,material:l.material,densidad:l.densidad,estado:l.estado,fecha:l.fecha,nota:l.nota});
+    renderSiembra(); renderLots(); fillAll(); cerrarModal('modal-sie-futura-bg'); toast('✓ Siembra planificada');
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+
+// ── LABORES ───────────────────────────────────────────────────
+async function regLabor() {
+  const fe=gv('l-f'),lo=gv('l-lo'),ti=getLaborVal('l-ti','l-ti-m');
+  if(!fe||!lo||!ti){toast('Completa fecha, lote y tipo','warn');return;}
+  syncOn();
+  try {
+    const rows=await apiPost('labores',{fecha:fe,lote:lo,tipo:ti,trabajadores:gv('l-tr')||null,area:gvf('l-ar')||null,jornales:gvf('l-jo')||null,costo:gvf('l-co')||null,estado:gv('l-es'),obs:gv('l-ob')||null,rapido:false});
+    if (!rows||!rows[0]) throw new Error('Sin respuesta del servidor');
+    lab.unshift(mLab(rows[0])); renderLab(); panel(); toast('✓ Labor guardada');
+    ['l-tr','l-ar','l-jo','l-co','l-ob'].forEach(i=>{const e=document.getElementById(i);if(e)e.value='';});
+    const lo_=document.getElementById('l-lo');if(lo_)lo_.value='';
+    const ti_=document.getElementById('l-ti');if(ti_)ti_.value='';
+    const lm=document.getElementById('l-ti-m');if(lm){lm.value='';lm.style.display='none';}
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+async function delL(id) {
+  if(!confirm('¿Eliminar?'))return; syncOn();
+  try { await apiDelete('labores',id); lab=lab.filter(r=>r.id!==id); renderLab(); panel(); toast('Eliminado'); }
+  catch(e) { toastErr(e); } syncOff();
+}
+async function cambiarEstado(id, nuevoEstado) {
+  syncOn();
+  try {
+    // PATCH solo el campo estado
+    const r=await fetch(`${SB_URL}/rest/v1/labores?id=eq.${id}`,{
+      method:'PATCH',
+      headers:{...HEADERS,'Prefer':'return=representation'},
+      body:JSON.stringify({estado:nuevoEstado})
+    });
+    if(!r.ok) throw new Error(await r.text());
+    const rows=await r.text().then(t=>t?JSON.parse(t):[]);
+    if(rows&&rows[0]){
+      const lab_=lab.find(x=>x.id===id);
+      if(lab_) lab_.es=nuevoEstado;
+    }
+    renderLab(); panel(); toast('✓ Estado: '+nuevoEstado);
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+// Ciclo de estados: Programada → En proceso → Completada → Programada
+function siguienteEstado(es) {
+  if(es==='Programada') return 'En proceso';
+  if(es==='En proceso') return 'Completada';
+  return 'Programada';
+}
+function renderLab() {
+  const f=lab.filter(r=>!String(r.ob||'').startsWith('[cacao]'));
+  set('cnt-lab',f.length);
+  const tb=document.getElementById('l-hist'); if(!tb) return;
+  // Show estado as clickable to cycle through states
+  tb.innerHTML=f.length?f.map(r=>{
+    const m={Completada:'bg',Programada:'bb','En proceso':'ba'};
+    const cls=m[r.es]||'bgr';
+    const sig=siguienteEstado(r.es);
+    const emojiSig=sig==='En proceso'?'🔄':sig==='Completada'?'✅':'📋';
+    return`<tr>
+      <td>${r.fe?r.fe.slice(5):''}</td>
+      <td style="font-size:11px">${r.lo||'—'}</td>
+      <td style="font-size:11px">${(r.ti||'').slice(0,14)}</td>
+      <td>
+        <button onclick="cambiarEstado(${r.id},'${sig}')" title="Cambiar a ${sig}"
+          style="background:none;border:1px solid var(--border2);border-radius:20px;padding:3px 8px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap"
+          class="bdg ${cls}">${r.es||'—'} ${emojiSig}</button>
+      </td>
+      <td><button class="dbtn" onclick="delL(${r.id})">×</button></td>
+    </tr>`;
+  }).join(''):'<tr class="er"><td colspan="5">Sin registros</td></tr>';
+}
+function renderRend() {
+  const f=lab.filter(r=>!String(r.ob||'').startsWith('[cacao]'));
+  const th=f.reduce((s,r)=>s+Number(r.ar||0),0),tc=f.reduce((s,r)=>s+Number(r.co||0),0),tj=f.reduce((s,r)=>s+Number(r.jo||0),0);
+  set('r-n',f.length);set('r-ha',th.toFixed(2));set('r-co',copF(tc));set('r-jo',tj.toFixed(1));
+  const g={};f.forEach(r=>{if(!r.ti||!r.ar||!r.jo)return;if(!g[r.ti])g[r.ti]={ha:0,j:0};g[r.ti].ha+=Number(r.ar);g[r.ti].j+=Number(r.jo);});
+  const tb=document.getElementById('r-tbl'); if(!tb) return;
+  const en=Object.entries(g);
+  tb.innerHTML=en.length?en.map(([ti,d])=>{const real=d.j>0?(d.ha/d.j).toFixed(2):0;const est=EST[ti]||1;const pct=Math.round(real/est*100);return`<tr><td style="font-size:12px">${ti.slice(0,20)}</td><td>${est}</td><td>${real}</td><td><span class="bdg ${pct>=100?'bg':pct>=80?'ba':'br'}">${pct}%</span></td></tr>`;}).join(''):'<tr class="er"><td colspan="4">Registra con área y jornales</td></tr>';
+}
+
+// ── MAQUINARIA ────────────────────────────────────────────────
+async function regMaq() {
+  const fe=gv('m-f'),mq_=gv('m-mq'),lb=gv('m-lb');
+  if(!fe||!mq_||!lb){toast('Completa fecha, máquina y labor','warn');return;}
+  syncOn();
+  try {
+    const rows=await apiPost('maquinaria',{fecha:fe,maquina:mq_,labor:lb,lote:gv('m-lo')||null,horas:gvf('m-hr')||null,area:gvf('m-ar')||null,galones:gvf('m-ga')||null,costo:gvf('m-co-i')||null,operador:gv('m-op')||null,horo_ini:gv('m-hi')||null,obs:gv('m-ob')||null});
+    if (!rows||!rows[0]) throw new Error('Sin respuesta');
+    maq.unshift(mMaq(rows[0])); renderMaq(); panel(); toast('✓ Maquinaria guardada');
+    ['m-hr','m-ar','m-ga','m-co-i','m-op','m-hi','m-ob'].forEach(i=>{const e=document.getElementById(i);if(e)e.value='';});
+    ['m-mq','m-lb','m-lo'].forEach(i=>{const e=document.getElementById(i);if(e)e.value='';});
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+async function delM(id) {
+  if(!confirm('¿Eliminar?'))return; syncOn();
+  try { await apiDelete('maquinaria',id); maq=maq.filter(r=>r.id!==id); renderMaq(); panel(); toast('Eliminado'); }
+  catch(e) { toastErr(e); } syncOff();
+}
+function renderMaq() {
+  const nh=maq.reduce((s,r)=>s+Number(r.hr||0),0),na=maq.reduce((s,r)=>s+Number(r.ar||0),0),nc=maq.reduce((s,r)=>s+Number(r.co||0),0);
+  set('m-n',maq.length);set('m-hrs',nh.toFixed(1));set('m-ha',na.toFixed(1));set('m-co',cop(nc));set('cnt-maq',maq.length);
+  const tb=document.getElementById('m-hist'); if(!tb) return;
+  // Maquinaria no tiene campo estado en BD pero mostramos labor con badge
+  tb.innerHTML=maq.length?maq.map(r=>`<tr>
+    <td>${r.fe?r.fe.slice(5):''}</td>
+    <td style="font-size:11px">${(r.mq||'').slice(0,11)}</td>
+    <td style="font-size:11px">${r.lo||'—'}</td>
+    <td>${r.hr}h</td>
+    <td>${cop(r.co)}</td>
+    <td><button class="dbtn" onclick="delM(${r.id})">×</button></td>
+  </tr>`).join(''):'<tr class="er"><td colspan="6">Sin registros</td></tr>';
+}
+function renderMaqRend() {
+  const gm={},gl={};
+  maq.forEach(r=>{
+    const mq=r.mq||'Sin nombre';
+    if(!gm[mq])gm[mq]={n:0,hr:0,co:0,ga:0};
+    gm[mq].n++;gm[mq].hr+=Number(r.hr||0);gm[mq].co+=Number(r.co||0);gm[mq].ga+=Number(r.ga||0);
+    const lo=r.lo||'—'; if(!gl[lo])gl[lo]={n:0,hr:0,co:0};
+    gl[lo].n++;gl[lo].hr+=Number(r.hr||0);gl[lo].co+=Number(r.co||0);
+  });
+  const tg=maq.reduce((s,r)=>s+Number(r.ga||0),0),th=maq.reduce((s,r)=>s+Number(r.hr||0),0),ta=maq.reduce((s,r)=>s+Number(r.ar||0),0),tc=maq.reduce((s,r)=>s+Number(r.co||0),0);
+  set('m-gal',tg.toFixed(1));set('m-gph',th>0?(tg/th).toFixed(2):'0');set('m-hph',th>0?(ta/th).toFixed(2):'0');set('m-cph',th>0?cop(Math.round(tc/th)):'$0');
+
+  // Gráficas de barras horizontales
+  const entMQ = Object.entries(gm).sort((a,b)=>b[1].hr-a[1].hr);
+  const entLO = Object.entries(gl).filter(([l])=>l!=='—').sort((a,b)=>b[1].hr-a[1].hr);
+  const maxHrs = entMQ.length?entMQ[0][1].hr:1;
+  const maxCos = entMQ.length?entMQ[0][1].co:1;
+  const maxLHrs = entLO.length?entLO[0][1].hr:1;
+
+  // Horas por máquina
+  const chHrs=document.getElementById('chart-maq-hrs');
+  if(chHrs) chHrs.innerHTML=entMQ.length?entMQ.map(([mq,d])=>`
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+        <span style="font-weight:600">${mq.slice(0,22)}</span>
+        <span style="color:var(--blue);font-weight:700">${d.hr.toFixed(1)}h · ${d.n} usos</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${Math.round(d.hr/maxHrs*100)}%;background:var(--blue)"></div></div>
+    </div>`).join(''):'<p style="color:var(--text2);font-size:13px">Sin datos</p>';
+
+  // Costo por máquina
+  const chCos=document.getElementById('chart-maq-cos');
+  if(chCos) chCos.innerHTML=entMQ.length?entMQ.map(([mq,d])=>`
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+        <span style="font-weight:600">${mq.slice(0,22)}</span>
+        <span style="color:var(--green);font-weight:700">${cop(d.co)}</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${maxCos>0?Math.round(d.co/maxCos*100):0}%;background:var(--green)"></div></div>
+    </div>`).join(''):'<p style="color:var(--text2);font-size:13px">Sin datos</p>';
+
+  // Horas por lote
+  const chLote=document.getElementById('chart-maq-lote');
+  if(chLote) chLote.innerHTML=entLO.length?entLO.slice(0,8).map(([lo,d])=>`
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+        <span style="font-weight:600">${lo}</span>
+        <span style="color:var(--amber);font-weight:700">${d.hr.toFixed(1)}h</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${Math.round(d.hr/maxLHrs*100)}%;background:var(--amber)"></div></div>
+    </div>`).join(''):'<p style="color:var(--text2);font-size:13px">Sin datos por lote</p>';
+
+  // Tablas
+  const t1=document.getElementById('m-x-mq');
+  if(t1)t1.innerHTML=entMQ.length?entMQ.map(([m,d])=>`<tr><td style="font-size:12px">${m.slice(0,14)}</td><td>${d.n}</td><td>${d.hr.toFixed(1)}h</td><td>${cop(d.co)}</td></tr>`).join(''):'<tr class="er"><td colspan="4">Sin datos</td></tr>';
+  const t2=document.getElementById('m-x-lo');
+  if(t2)t2.innerHTML=entLO.length?entLO.map(([l,d])=>`<tr><td>${l}</td><td>${d.n}</td><td>${d.hr.toFixed(1)}h</td><td>${cop(d.co)}</td></tr>`).join(''):'<tr class="er"><td colspan="4">Sin datos</td></tr>';
+}
+
+// ── MANTENIMIENTO ─────────────────────────────────────────────
+async function regMant() {
+  const fe=gv('mt-f'); if(!fe){toast('Ingresa la fecha','warn');return;}
+  syncOn();
+  try {
+    const rows=await apiPost('mantenimientos',{fecha:fe,maquina:gv('mt-mq'),tipo:gv('mt-ti'),horometro:gv('mt-ho')||null,costo:gvf('mt-co')||null,responsable:gv('mt-re')||null,proximo:gv('mt-pr')||null,obs:gv('mt-ob')||null});
+    if (!rows||!rows[0]) throw new Error('Sin respuesta');
+    mnt.unshift({id:rows[0].id,fe:rows[0].fecha,mq:rows[0].maquina,ti:rows[0].tipo,ho:rows[0].horometro,co:rows[0].costo,re:rows[0].responsable,pr:rows[0].proximo,ob:rows[0].obs});
+    renderMnt(); toast('✓ Mantenimiento guardado');
+    ['mt-ho','mt-co','mt-re','mt-ob'].forEach(i=>{const e=document.getElementById(i);if(e)e.value='';});
+    const mp=document.getElementById('mt-pr');if(mp)mp.value='';
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+async function delMT(id) {
+  if(!confirm('¿Eliminar?'))return; syncOn();
+  try { await apiDelete('mantenimientos',id); mnt=mnt.filter(r=>r.id!==id); renderMnt(); toast('Eliminado'); }
+  catch(e) { toastErr(e); } syncOff();
+}
+function renderMnt() {
+  set('cnt-mt',mnt.length);
+  const tb=document.getElementById('mt-hist'); if(!tb) return;
+  tb.innerHTML=mnt.length?mnt.map(r=>`<tr><td>${r.fe?r.fe.slice(5):''}</td><td style="font-size:11px">${(r.mq||'').slice(0,12)}</td><td style="font-size:11px">${(r.ti||'').slice(0,14)}</td><td>${cop(r.co)}</td><td><button class="dbtn" onclick="delMT(${r.id})">×</button></td></tr>`).join(''):'<tr class="er"><td colspan="5">Sin mantenimientos</td></tr>';
+}
+
+// ── COSECHA ───────────────────────────────────────────────────
+async function regCos() {
+  const fe=gv('c-f'),lo=gv('c-lo'),ra=gv('c-ra'),kg=gv('c-kg');
+  if(!fe||!ra||!kg){toast('Completa fecha, racimos y kg','warn');return;}
+  const pr=gv('c-pr')||700000; const lot=lotes.find(l=>l.nombre===lo); const ha=lot&&lot.ha?lot.ha:1;
+  const tHa=parseFloat((Number(kg)/1000/ha).toFixed(2)); const val=Math.round(Number(kg)/1000*Number(pr));
+  syncOn();
+  try {
+    const rows=await apiPost('cosechas',{fecha:fe,lote:lo,racimos:parseFloat(ra),kg:parseFloat(kg),t_ha:tHa,valor:val,obs:gv('c-ob')||null});
+    if (!rows||!rows[0]) throw new Error('Sin respuesta');
+    cos.unshift(mCos(rows[0])); renderCos(); toast('✓ Cosecha guardada');
+    ['c-ra','c-kg','c-ob'].forEach(i=>{const e=document.getElementById(i);if(e)e.value='';});
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+async function delCos(id) {
+  if(!confirm('¿Eliminar?'))return; syncOn();
+  try { await apiDelete('cosechas',id); cos=cos.filter(r=>r.id!==id); renderCos(); toast('Eliminado'); }
+  catch(e) { toastErr(e); } syncOff();
+}
+function renderCos() {
+  set('cnt-cos',cos.length);
+  const tb=document.getElementById('c-hist'); if(!tb) return;
+  tb.innerHTML=cos.length?cos.map(r=>`<tr><td>${r.fe?r.fe.slice(5):''}</td><td>${r.lo||'—'}</td><td>${r.kg?r.kg.toLocaleString('es-CO'):0}</td><td>${r.tHa}</td><td>${cop(r.val)}</td><td><button class="dbtn" onclick="delCos(${r.id})">×</button></td></tr>`).join(''):'<tr class="er"><td colspan="6">Sin cosechas</td></tr>';
+}
+
+// ── LLUVIA ────────────────────────────────────────────────────
+function _impDia(mm) {
+  if(mm===0)return{cls:'br',txt:'Sin lluvia'};
+  if(mm<MM_DIA)return{cls:'ba',txt:'Déficit '+(MM_DIA-mm).toFixed(1)+' mm'};
+  if(mm<=MM_DIA*2)return{cls:'bg',txt:'✓ Cubierto'};
+  return{cls:'bb',txt:'Exceso +'+(mm-MM_DIA).toFixed(0)+' mm'};
+}
+function _impMes(mm,ym) {
+  if(mm===0)return{cls:'imp-sin',txt:'Sin datos',bdg:'bgr'};
+  const req=ym?reqMes(ym):150; const pct=mm/req*100;
+  if(mm<req*0.5)return{cls:'imp-estres',txt:'🔴 Estrés grave',bdg:'br'};
+  if(mm<req)return{cls:'imp-suboptimo',txt:'🟠 Bajo '+Math.round(pct)+'%',bdg:'br'};
+  if(mm<=req*2.33)return{cls:'imp-optimo',txt:'🟢 Óptimo ✓',bdg:'bg'};
+  if(mm<=req*3.33)return{cls:'imp-exceso-mod',txt:'🔵 Exceso mod.',bdg:'bb'};
+  return{cls:'imp-exceso-grav',txt:'🔴 Exceso grave',bdg:'br'};
+}
+async function regLL() {
+  const fe=gv('ll-f'),mmv=gv('ll-mm');
+  if(!fe||!mmv){toast('Ingresa fecha y mm','warn');return;}
+  syncOn();
+  try {
+    const rows=await apiPost('lluvias',{fecha:fe,mm:parseFloat(String(mmv).replace(',','.'))||0,obs:gv('ll-ob')||'Normal'});
+    if (!rows||!rows[0]) throw new Error('Sin respuesta');
+    ll.unshift(mLL(rows[0])); renderLL(); panel(); toast('✓ Lluvia '+mmv+' mm guardada');
+    const lmm=document.getElementById('ll-mm');if(lmm)lmm.value='';
+    const lob=document.getElementById('ll-ob');if(lob)lob.value='';
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+async function delLL(id) {
+  if(!confirm('¿Eliminar?'))return; syncOn();
+  try { await apiDelete('lluvias',id); ll=ll.filter(r=>r.id!==id); renderLL(); panel(); toast('Eliminado'); }
+  catch(e) { toastErr(e); } syncOff();
+}
+function renderLL() {
+  const tot=ll.reduce((s,r)=>s+Number(r.mm||0),0), pr=ll.length?tot/ll.length:0;
+  set('ll-n',ll.length);set('ll-tot',Math.round(tot));set('ll-pr',pr.toFixed(1));set('cnt-ll',ll.length);
+  const hoyStr=hoy();
+  const llH=ll.filter(r=>r.fe===hoyStr).reduce((s,r)=>s+Number(r.mm||0),0);
+  const def=Math.max(0,MM_DIA-llH);
+  const de=document.getElementById('ll-deficit');const ds=document.getElementById('ll-deficit-sub');
+  if(de){de.textContent=def>0?def.toFixed(1)+' mm':'0 mm'; if(ds)ds.textContent=def>0?'bajo mínimo hoy':'✓ cubierto hoy';}
+  const tb=document.getElementById('ll-hist'); if(!tb) return;
+  tb.innerHTML=ll.length?ll.map(r=>{const imp=_impDia(Number(r.mm||0));return`<tr><td>${r.fe?r.fe.slice(5):''}</td><td><strong>${r.mm} mm</strong></td><td style="font-size:11px">${r.ob||'—'}</td><td><span class="bdg ${imp.cls}">${imp.txt}</span></td><td><button class="dbtn" onclick="delLL(${r.id})">×</button></td></tr>`;}).join(''):'<tr class="er"><td colspan="5">Sin registros</td></tr>';
+  // Agrupar por día (un valor por día = el del registro más reciente si hay varios)
+  const porDia={};ll.forEach(r=>{if(!r.fe)return;if(porDia[r.fe]===undefined)porDia[r.fe]=Number(r.mm||0);});
+  // Sumar por mes (un valor por día)
+  const pm={};Object.entries(porDia).forEach(([fe,mm])=>{const m=fe.slice(0,7);if(!pm[m])pm[m]=0;pm[m]+=mm;});
+  const mg=document.getElementById('lluvia-meses');
+  if(mg){
+    const claves=Object.keys(pm).sort();
+    mg.innerHTML=claves.length?claves.map(k=>{const mmV=Math.round(pm[k]);const imp=_impMes(mmV,k);const[y,m]=k.split('-');const req=reqMes(k);const bal=mmV-req;return`<div class="mes-card ${imp.cls}"><div class="mes-name">${MESES[parseInt(m)-1]} ${y}</div><div class="mes-mm">${mmV} mm</div><div style="font-size:11px"><span class="bdg ${imp.bdg}">${imp.txt}</span></div><div style="font-size:10px;color:var(--text2);margin-top:3px">${(bal>=0?'+':'')+Math.round(bal)} mm vs req (${req})</div></div>`;}).join(''):'<p style="color:var(--text2);font-size:13px;grid-column:1/-1">Sin registros</p>';
+  }
+  const claves2=Object.keys(pm).sort();
+  if(claves2.length) {
+    const dataLL=claves2.map(k=>{const[,m]=k.split('-');return{lbl:MESES[parseInt(m)-1],v:Math.round(pm[k])};});
+    barChart('chart-ll',dataLL,'mm','var(--blue)');
+  }
+}
+
+// ── INSUMOS ───────────────────────────────────────────────────
+async function regIns() {
+  const fe=gv('i-f'),ca=gv('i-ca');
+  if(!fe||!ca){toast('Ingresa fecha y cantidad','warn');return;}
+  syncOn();
+  try {
+    const rows=await apiPost('insumos',{fecha:fe,tipo:gv('i-ti'),lote:gv('i-lo')||null,cantidad:gvf('i-ca'),costo:gvf('i-coi')||0,obs:gv('i-ob')||null});
+    if (!rows||!rows[0]) throw new Error('Sin respuesta');
+    ins.unshift(mIns(rows[0])); renderIns(); toast('✓ Insumo guardado');
+    ['i-ca','i-coi','i-ob'].forEach(i=>{const e=document.getElementById(i);if(e)e.value='';});
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+async function delIns(id) {
+  if(!confirm('¿Eliminar?'))return; syncOn();
+  try { await apiDelete('insumos',id); ins=ins.filter(r=>r.id!==id); renderIns(); toast('Eliminado'); }
+  catch(e) { toastErr(e); } syncOff();
+}
+function renderIns() {
+  const f=ins.filter(r=>!String(r.ob||'').startsWith('[cacao]'));
+  const tot=f.reduce((s,r)=>s+Number(r.co||0),0);
+  set('i-n',f.length);set('i-co',copF(tot));set('cnt-ins',f.length);
+  const tb=document.getElementById('i-hist'); if(!tb) return;
+  tb.innerHTML=f.length?f.map(r=>`<tr><td>${r.fe?r.fe.slice(5):''}</td><td style="font-size:11px">${(r.ti||'').slice(0,12)}</td><td>${r.lo||'—'}</td><td>${r.ca}</td><td>${cop(r.co)}</td><td><button class="dbtn" onclick="delIns(${r.id})">×</button></td></tr>`).join(''):'<tr class="er"><td colspan="6">Sin registros</td></tr>';
+}
+
+// ── REGISTRO RÁPIDO ───────────────────────────────────────────
+let rqMode='labor';
+function selRQ(mode,el) {
+  rqMode=mode;
+  document.querySelectorAll('.rq-card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');
+  ['rq-labor','rq-maq','rq-lluvia','rq-insumo'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});
+  const s=document.getElementById('rq-'+mode);if(s)s.style.display='block';
+}
+function clrRQ(ids){ids.forEach(id=>{const e=document.getElementById(id);if(e)e.value='';})}
+
+async function regRQLabor() {
+  const fe=gv('rq-l-f'),lo=gv('rq-l-lo'),ti=getLaborVal('rq-l-ti','rq-l-ti-m');
+  if(!fe||!lo||!ti){toast('Completa fecha, lote y tipo','warn');return;}
+  syncOn();
+  try {
+    const rows=await apiPost('labores',{fecha:fe,lote:lo,tipo:ti,estado:gv('rq-l-es'),obs:gv('rq-l-ob')||null,rapido:true});
+    if (!rows||!rows[0]) throw new Error('Sin respuesta');
+    lab.unshift(mLab(rows[0])); panel(); renderRQRecientes(); toast('✓ Labor guardada');
+    clrRQ(['rq-l-lo','rq-l-ti','rq-l-ob']);
+    const es=document.getElementById('rq-l-es');if(es)es.value='Completada';
+    const lm=document.getElementById('rq-l-ti-m');if(lm){lm.value='';lm.style.display='none';}
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+async function regRQMaq() {
+  const fe=gv('rq-m-f'),mq_=gv('rq-m-mq');
+  if(!fe||!mq_){toast('Completa fecha y máquina','warn');return;}
+  syncOn();
+  try {
+    const rows=await apiPost('maquinaria',{fecha:fe,maquina:mq_,labor:gv('rq-m-lb')||null,lote:gv('rq-m-lo')||null,horas:gvf('rq-m-hr')||null,operador:gv('rq-m-op')||null});
+    if (!rows||!rows[0]) throw new Error('Sin respuesta');
+    maq.unshift(mMaq(rows[0])); panel(); renderRQRecientes(); toast('✓ Maquinaria guardada');
+    clrRQ(['rq-m-mq','rq-m-lo','rq-m-hr','rq-m-lb','rq-m-op']);
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+async function regRQLluvia() {
+  const fe=gv('rq-ll-f'),mmv=gv('rq-ll-mm');
+  if(!fe||!mmv){toast('Ingresa fecha y mm','warn');return;}
+  syncOn();
+  try {
+    const rows=await apiPost('lluvias',{fecha:fe,mm:parseFloat(String(mmv).replace(',','.'))||0,obs:gv('rq-ll-ob')||'Normal'});
+    if (!rows||!rows[0]) throw new Error('Sin respuesta');
+    ll.unshift(mLL(rows[0])); panel(); renderRQRecientes(); toast('✓ Lluvia '+mmv+' mm guardada');
+    clrRQ(['rq-ll-mm','rq-ll-ob']);
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+async function regRQInsumo() {
+  const fe=gv('rq-i-f'),ca=gv('rq-i-ca');
+  if(!fe||!ca){toast('Ingresa fecha y cantidad','warn');return;}
+  syncOn();
+  try {
+    const rows=await apiPost('insumos',{fecha:fe,tipo:gv('rq-i-ti'),lote:gv('rq-i-lo')||null,cantidad:gvf('rq-i-ca'),costo:0,obs:null});
+    if (!rows||!rows[0]) throw new Error('Sin respuesta');
+    ins.unshift(mIns(rows[0])); panel(); renderRQRecientes(); toast('✓ Insumo guardado');
+    clrRQ(['rq-i-ca','rq-i-lo']);
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+function renderRQRecientes() {
+  const evs=[];
+  lab.filter(r=>!String(r.ob||'').startsWith('[cacao]')).slice(0,4).forEach(r=>evs.push({fe:r.fe,ico:'👷',txt:`${r.ti||'Labor'} — ${r.lo||'—'}`}));
+  maq.slice(0,3).forEach(r=>evs.push({fe:r.fe,ico:'🚜',txt:`${r.mq||'Máquina'} — ${r.lo||'—'}`}));
+  ll.slice(0,3).forEach(r=>evs.push({fe:r.fe,ico:'🌧️',txt:`Lluvia ${r.mm} mm`}));
+  ins.filter(r=>!String(r.ob||'').startsWith('[cacao]')).slice(0,2).forEach(r=>evs.push({fe:r.fe,ico:'🧴',txt:`${r.ti||'Insumo'} — ${r.lo||'—'}`}));
+  evs.sort((a,b)=>(b.fe||'').localeCompare(a.fe||''));
+  const el=document.getElementById('rq-recientes'); if(!el) return;
+  el.innerHTML=evs.length?evs.slice(0,8).map(e=>`<div class="act-item"><div class="act-ico">${e.ico}</div><span style="flex:1;font-size:13px">${e.txt}</span><span class="act-time">${e.fe?e.fe.slice(5):''}</span></div>`).join(''):'<p style="color:var(--text2);font-size:13px">Sin registros aún</p>';
+}
+
+// ── CACAO ─────────────────────────────────────────────────────
+function renderCacaoLotes() {
+  const ccLab2=lab.filter(r=>String(r.ob||'').startsWith('[cacao]'));
+  const ccIns2=ins.filter(r=>String(r.ob||'').startsWith('[cacao]'));
+  const ha=ccLotes.reduce((s,l)=>s+Number(l.ha||0),0);
+  const arb=ccLotes.reduce((s,l)=>s+Number(l.arboles||0),0);
+  const costo=ccLab2.reduce((s,r)=>s+Number(r.co||0),0)+ccIns2.reduce((s,r)=>s+Number(r.co||0),0);
+  set('cc-nlotes',ccLotes.length);set('cnt-cc-lotes',ccLotes.length);
+  set('cc-ha',ha.toFixed(2));set('cc-arboles',arb.toLocaleString('es-CO'));set('cc-costo',cop(costo));
+  const g=document.getElementById('cc-lot-cards'); if(!g) return;
+  if (!ccLotes.length) { g.innerHTML='<p style="color:var(--text2);font-size:13px">Sin lotes cacao.</p>'; return; }
+  g.innerHTML=ccLotes.map(l=>{
+    const cls=l.estado.includes('Sembrado')?'bg':l.estado.includes('Siembra')?'ba':'bgr';
+    const costoL=ccLab2.filter(r=>r.lo===l.nombre).reduce((s,r)=>s+Number(r.co||0),0)+ccIns2.filter(r=>r.lo===l.nombre).reduce((s,r)=>s+Number(r.co||0),0);
+    return `<div class="lcard">
+      <div class="ln">${l.nombre}</div>
+      <div class="ld">${l.ha>0?'📐 '+l.ha+' ha':'📐 —'}</div>
+      <div class="ld">🌿 ${(l.arboles||0).toLocaleString('es-CO')} árboles</div>
+      <div class="ld" style="font-size:11px">${l.material||'—'}</div>
+      ${l.fecha?`<div class="ld" style="font-size:11px">📅 ${l.fecha.slice(0,7)}</div>`:''}
+      <div style="margin-top:6px"><span class="bdg ${cls}">${l.estado}</span></div>
+      <div style="font-size:11px;color:var(--text2);margin-top:4px">💰 ${cop(costoL)}</div>
+      ${l.nota?`<div style="font-size:11px;color:var(--amber);margin-top:4px">⚠ ${l.nota}</div>`:''}
+      <div class="lcard-actions">
+        <button class="btn bts" style="flex:1;background:var(--gbg);color:var(--gtx);border-color:rgba(26,138,58,.3)" onclick="abrirModalCacaoLote('${l.id}')">✏ Editar</button>
+        <button class="btn bts btd" onclick="eliminarLoteCacao('${l.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+  ['cc-l-lo','cc-i-lo'].forEach(id=>{
+    const s=document.getElementById(id); if(!s) return;
+    const cur=s.value;
+    s.innerHTML='<option value="">Seleccionar lote cacao…</option>';
+    ccLotes.forEach(l=>{const o=document.createElement('option');o.value=l.nombre;o.textContent=l.nombre+(l.ha>0?' ('+l.ha+' ha)':'');s.appendChild(o);});
+    if(cur)s.value=cur;
+  });
+}
+function renderCCLab() {
+  const f=lab.filter(r=>String(r.ob||'').startsWith('[cacao]'));
+  set('cnt-cc-lab',f.length);set('cnt-cc-lab2',f.length);
+  const tb=document.getElementById('cc-l-hist'); if(!tb) return;
+  tb.innerHTML=f.length?f.map(r=>{
+    const m={Completada:'bg',Programada:'bb','En proceso':'ba'};
+    const sig=siguienteEstado(r.es);
+    const emojiSig=sig==='En proceso'?'🔄':sig==='Completada'?'✅':'📋';
+    return`<tr>
+      <td>${r.fe?r.fe.slice(5):''}</td>
+      <td style="font-size:11px">${r.lo||'—'}</td>
+      <td style="font-size:11px">${(r.ti||'').slice(0,16)}</td>
+      <td>
+        <button onclick="cambiarEstado(${r.id},'${sig}')" title="Cambiar a ${sig}"
+          style="background:none;border:1px solid var(--border2);border-radius:20px;padding:2px 7px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap"
+          class="bdg ${m[r.es]||'bgr'}">${r.es||'—'} ${emojiSig}</button>
+      </td>
+      <td><button class="dbtn" onclick="delCCLab(${r.id})">×</button></td>
+    </tr>`;
+  }).join(''):'<tr class="er"><td colspan="5">Sin labores cacao</td></tr>';
+}
+function renderCCIns() {
+  const f=ins.filter(r=>String(r.ob||'').startsWith('[cacao]'));
+  const tb=document.getElementById('cc-i-hist'); if(!tb) return;
+  tb.innerHTML=f.length?f.map(r=>`<tr><td>${r.fe?r.fe.slice(5):''}</td><td>${r.lo||'—'}</td><td style="font-size:11px">${(r.ti||'').slice(0,14)}</td><td>${r.ca}</td><td>${cop(r.co)}</td><td><button class="dbtn" onclick="delCCIns(${r.id})">×</button></td></tr>`).join(''):'<tr class="er"><td colspan="6">Sin insumos</td></tr>';
+}
+function renderCacaoAnalisis() {
+  const f=lab.filter(r=>String(r.ob||'').startsWith('[cacao]'));
+  const fi=ins.filter(r=>String(r.ob||'').startsWith('[cacao]'));
+  const totalArb=ccLotes.reduce((s,l)=>s+Number(l.arboles||0),0);
+  const ctot=f.reduce((s,r)=>s+Number(r.co||0),0)+fi.reduce((s,r)=>s+Number(r.co||0),0);
+  const carbol=totalArb>0?ctot/totalArb:0;
+  set('cc-an-nlab',f.length);set('cc-an-ctot',cop(ctot));
+  set('cc-an-carbol',cop(Math.round(carbol)));set('cc-an-arboles',totalArb.toLocaleString('es-CO'));
+  set('cc-an-comp',f.filter(r=>r.es==='Completada').length);
+  set('cc-an-proc',f.filter(r=>r.es==='En proceso').length);
+  set('cc-an-prog',f.filter(r=>r.es==='Programada').length);
+
+  // Costo por tipo labor
+  const gT={};f.filter(r=>r.co>0).forEach(r=>{if(!gT[r.ti])gT[r.ti]=0;gT[r.ti]+=Number(r.co||0);});
+  const topT=Object.entries(gT).sort((a,b)=>b[1]-a[1]);
+  const maxT=topT.length?topT[0][1]:1;
+  const chL=document.getElementById('cc-chart-labor');
+  if(chL)chL.innerHTML=topT.length?topT.map(([ti,v])=>`
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+        <span style="font-weight:600">${(ti||'').slice(0,26)}</span>
+        <span style="color:var(--green);font-weight:700">${cop(v)}</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${Math.round(v/maxT*100)}%;background:var(--green)"></div></div>
+    </div>`).join(''):'<p style="color:var(--text2);font-size:13px">Sin labores con costo</p>';
+
+  // Costo por lote cacao
+  const gLo={};f.forEach(r=>{if(!r.lo)return;if(!gLo[r.lo])gLo[r.lo]=0;gLo[r.lo]+=Number(r.co||0);});
+  fi.forEach(r=>{if(!r.lo)return;if(!gLo[r.lo])gLo[r.lo]=0;gLo[r.lo]+=Number(r.co||0);});
+  const topLo=Object.entries(gLo).sort((a,b)=>b[1]-a[1]);
+  const maxLo=topLo.length?topLo[0][1]:1;
+  const chLo=document.getElementById('cc-chart-lote');
+  if(chLo)chLo.innerHTML=topLo.length?topLo.map(([lo,v])=>{
+    const lote=ccLotes.find(l=>l.nombre===lo);
+    const arb=lote?lote.arboles:0;
+    const carbolL=arb>0?Math.round(v/arb):0;
+    return`<div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+        <span style="font-weight:600">${lo}</span>
+        <span style="color:var(--amber);font-weight:700">${cop(v)}${carbolL>0?' · '+cop(carbolL)+'/árbol':''}</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${Math.round(v/maxLo*100)}%;background:var(--amber)"></div></div>
+    </div>`;
+  }).join(''):'<p style="color:var(--text2);font-size:13px">Sin datos por lote</p>';
+
+  // Costos por mes
+  const pm={};f.forEach(r=>{const m=r.fe?r.fe.slice(0,7):'';if(!m)return;if(!pm[m])pm[m]=0;pm[m]+=Number(r.co||0);});
+  fi.forEach(r=>{const m=r.fe?r.fe.slice(0,7):'';if(!m)return;if(!pm[m])pm[m]=0;pm[m]+=Number(r.co||0);});
+  const claves=Object.keys(pm).sort();
+  if(claves.length){
+    const data=claves.map(k=>{const[,m]=k.split('-');return{lbl:MESES[parseInt(m)-1],v:Math.round(pm[k])};});
+    barChart('cc-chart-mes',data,'$','var(--green)');
+  }
+}
+
+function abrirModalCacaoLote(id) {
+  document.getElementById('modal-cc-lote-title').textContent=id?'Editar lote cacao':'Nuevo lote cacao';
+  document.getElementById('cc-ml-id').value=id||'';
+  if (id) {
+    const l=ccLotes.find(x=>x.id===id); if(!l) return;
+    document.getElementById('cc-ml-nombre').value=l.nombre;
+    document.getElementById('cc-ml-ha').value=l.ha;
+    document.getElementById('cc-ml-arboles').value=l.arboles||0;
+    document.getElementById('cc-ml-material').value=l.material||'';
+    document.getElementById('cc-ml-densidad').value=l.densidad||1000;
+    document.getElementById('cc-ml-estado').value=l.estado;
+    document.getElementById('cc-ml-fecha').value=l.fecha||'';
+    document.getElementById('cc-ml-nota').value=l.nota||'';
+  } else {
+    ['cc-ml-nombre','cc-ml-ha','cc-ml-arboles','cc-ml-material','cc-ml-nota'].forEach(x=>{const e=document.getElementById(x);if(e)e.value='';});
+    const fe=document.getElementById('cc-ml-fecha');if(fe)fe.value=hoy();
+    const den=document.getElementById('cc-ml-densidad');if(den)den.value='1000';
+    const es=document.getElementById('cc-ml-estado');if(es)es.value='Siembra 2026';
+  }
+  document.getElementById('modal-cc-lote-bg').classList.add('open');
+}
+async function guardarLoteCacao() {
+  const nombre=gv('cc-ml-nombre'); if(!nombre){toast('Ingresa un nombre','warn');return;}
+  const existId=gv('cc-ml-id');
+  const arboles=parseInt(gv('cc-ml-arboles'))||0;
+  const dat={
+    id:existId||('CC'+Date.now()), nombre,
+    ha:gvf('cc-ml-ha'),
+    palmas:arboles, // store arboles in palmas field
+    material:gv('cc-ml-material'),
+    densidad:String(parseInt(gv('cc-ml-densidad'))||1000), // store densidad as string
+    estado:gv('cc-ml-estado'), fecha:gv('cc-ml-fecha'), nota:gv('cc-ml-nota')
+  };
+  syncOn();
+  try {
+    await apiUpsert('lotes', dat);
+    const local={id:dat.id,nombre:dat.nombre,ha:dat.ha,arboles:dat.palmas,
+      material:dat.material,densidad:parseInt(dat.densidad)||1000,
+      estado:dat.estado,fecha:dat.fecha,nota:dat.nota};
+    if(existId){const l=ccLotes.find(x=>x.id===existId);if(l)Object.assign(l,local);}
+    else ccLotes.push(local);
+    renderCacaoLotes(); cerrarModal('modal-cc-lote-bg');
+    toast(existId?'✓ Lote cacao actualizado':'✓ Lote cacao agregado');
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+async function eliminarLoteCacao(id) {
+  if(!confirm('¿Eliminar?'))return;
+  syncOn();
+  try {
+    await apiDelete('lotes',id);
+    ccLotes=ccLotes.filter(l=>l.id!==id);
+    renderCacaoLotes(); toast('Lote cacao eliminado');
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+async function regLabCacao() {
+  const fe=gv('cc-l-f'),lo=gv('cc-l-lo'),ti=getLaborVal('cc-l-ti','cc-l-ti-m');
+  if(!fe||!lo||!ti){toast('Completa fecha, lote y labor','warn');return;}
+  const ob='[cacao] '+(gv('cc-l-ob')||'');
+  syncOn();
+  try {
+    const rows=await apiPost('labores',{fecha:fe,lote:lo,tipo:ti,area:gvf('cc-l-ar')||null,jornales:gvf('cc-l-jo')||null,costo:gvf('cc-l-co')||null,estado:gv('cc-l-es'),obs:ob.trim(),rapido:false});
+    if (!rows||!rows[0]) throw new Error('Sin respuesta');
+    lab.unshift(mLab(rows[0])); renderCCLab(); renderCacaoLotes(); panel(); toast('✓ Labor cacao guardada');
+    ['cc-l-ar','cc-l-co','cc-l-jo','cc-l-ob'].forEach(i=>{const e=document.getElementById(i);if(e)e.value='';});
+    const lo_=document.getElementById('cc-l-lo');if(lo_)lo_.value='';
+    const ti_=document.getElementById('cc-l-ti');if(ti_)ti_.value='';
+    const lm=document.getElementById('cc-l-ti-m');if(lm){lm.value='';lm.style.display='none';}
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+async function delCCLab(id) {
+  if(!confirm('¿Eliminar?'))return; syncOn();
+  try { await apiDelete('labores',id); lab=lab.filter(r=>r.id!==id); renderCCLab(); renderCacaoLotes(); panel(); toast('Eliminado'); }
+  catch(e) { toastErr(e); } syncOff();
+}
+async function regInsCacao() {
+  const fe=gv('cc-i-f'),ca=gv('cc-i-ca');
+  if(!fe||!ca){toast('Ingresa fecha y cantidad','warn');return;}
+  const ob='[cacao] '+(gv('cc-i-ob')||'');
+  syncOn();
+  try {
+    const rows=await apiPost('insumos',{fecha:fe,tipo:gv('cc-i-ti'),lote:gv('cc-i-lo')||null,cantidad:gvf('cc-i-ca'),costo:gvf('cc-i-co')||0,obs:ob.trim()});
+    if (!rows||!rows[0]) throw new Error('Sin respuesta');
+    ins.unshift(mIns(rows[0])); renderCCIns(); renderCacaoLotes(); toast('✓ Insumo cacao guardado');
+    ['cc-i-ca','cc-i-co','cc-i-ob'].forEach(i=>{const e=document.getElementById(i);if(e)e.value='';});
+  } catch(e) { toastErr(e); }
+  syncOff();
+}
+async function delCCIns(id) {
+  if(!confirm('¿Eliminar?'))return; syncOn();
+  try { await apiDelete('insumos',id); ins=ins.filter(r=>r.id!==id); renderCCIns(); renderCacaoLotes(); toast('Eliminado'); }
+  catch(e) { toastErr(e); } syncOff();
+}
+function expCCLab() {
+  const f=lab.filter(r=>String(r.ob||'').startsWith('[cacao]'));
+  if(!f.length){toast('Sin datos');return;}
+  dlCSV('cacao_labores.csv',toCSV(f,['fe','lo','ti','ar','co','es','ob']));
+  toast('Exportado');
+}
+
+// ── CHECKLIST ─────────────────────────────────────────────────
+function chk(li,key) {
+  li.querySelector('.chkb')?.classList.toggle('on');
+  li.querySelector('.chkt')?.classList.toggle('on');
+  try {
+    const ch=JSON.parse(localStorage.getItem(KCH)||'[]');
+    const i=ch.indexOf(key); if(i>=0)ch.splice(i,1);else ch.push(key);
+    localStorage.setItem(KCH,JSON.stringify(ch));
+  } catch(e){}
+}
+function loadChks() {
+  try {
+    const ch=JSON.parse(localStorage.getItem(KCH)||'[]');
+    document.querySelectorAll('#checklist li').forEach((li,i)=>{
+      if(ch.includes('c'+i)){li.querySelector('.chkb')?.classList.add('on');li.querySelector('.chkt')?.classList.add('on');}
+    });
+  } catch(e){}
+}
+
+// ── GRÁFICAS ──────────────────────────────────────────────────
+function barChart(elId,data,unit,color) {
+  const el=document.getElementById(elId); if(!el) return;
+  if(!data||!data.length){el.innerHTML='<span style="color:var(--text2);font-size:12px;margin:auto">Sin datos</span>';return;}
+  const max=Math.max(...data.map(d=>d.v),1); const H=120;
+  el.innerHTML=data.map(d=>{const h=Math.max(Math.round((d.v/max)*H),2);const lbl=d.v+' '+unit;return`<div class="bw"><div class="bv">${lbl}</div><div class="br2" style="height:${h}px;background:${color}"></div><div class="blb">${d.lbl}</div></div>`;}).join('');
+}
+
+// ── GERENCIA ──────────────────────────────────────────────────
+const KP='ay_presup';
+function inicializarMesSelector() {
+  const sel=document.getElementById('ger-mes'); if(!sel) return;
+  const ahora=new Date();
+  const mesActual=ahora.getFullYear()+'-'+String(ahora.getMonth()+1).padStart(2,'0');
+  sel.innerHTML='';
+  for(let i=0;i<12;i++){
+    const d=new Date(ahora.getFullYear(),ahora.getMonth()-i,1);
+    const val=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    const lbl=MESES[d.getMonth()]+' '+d.getFullYear();
+    const o=document.createElement('option');o.value=val;o.textContent=lbl;sel.appendChild(o);
+  }
+  sel.value=mesActual;
+  const pm=document.getElementById('pres-mes');if(pm)pm.value=mesActual;
+}
+function getMesSeleccionado(){return document.getElementById('ger-mes')?.value||hoy().slice(0,7);}
+function getPresupuesto(mes){try{const p=JSON.parse(localStorage.getItem(KP)||'{}');return p[mes]||{lab:0,maq:0,ins:0,jorn:0,ha:0};}catch{return{lab:0,maq:0,ins:0,jorn:0,ha:0};}}
+function guardarPresupuesto(){
+  const mes=document.getElementById('pres-mes')?.value||getMesSeleccionado();
+  try{
+    const p=JSON.parse(localStorage.getItem(KP)||'{}');
+    p[mes]={lab:gvf('pres-lab'),maq:gvf('pres-maq'),ins:gvf('pres-ins'),jorn:gvf('pres-jorn'),ha:gvf('pres-ha')};
+    localStorage.setItem(KP,JSON.stringify(p));
+  }catch(e){}
+  toast('✓ Presupuesto guardado');renderGerencia();
+}
+function cargarPresupuestoEnForm(mes){
+  const p=getPresupuesto(mes);
+  ['lab','maq','ins','jorn','ha'].forEach(k=>{const e=document.getElementById('pres-'+k);if(e)e.value=p[k]||'';});
+}
+
+function renderGerencia(){
+  const mes=getMesSeleccionado();
+  inicializarMesSelector();
+  const sel=document.getElementById('ger-mes');if(sel)sel.value=mes;
+  cargarPresupuestoEnForm(mes);
+
+  const labP=lab.filter(r=>!String(r.ob||'').startsWith('[cacao]'));
+  const insP=ins.filter(r=>!String(r.ob||'').startsWith('[cacao]'));
+  const labMes=labP.filter(r=>r.fe&&r.fe.startsWith(mes));
+  const maqMes=maq.filter(r=>r.fe&&r.fe.startsWith(mes));
+  const insMes=insP.filter(r=>r.fe&&r.fe.startsWith(mes));
+  const llMes=ll.filter(r=>r.fe&&r.fe.startsWith(mes));
+  const mesAnt=mesAnterior(mes);
+  const labAnt=labP.filter(r=>r.fe&&r.fe.startsWith(mesAnt));
+  const maqAnt=maq.filter(r=>r.fe&&r.fe.startsWith(mesAnt));
+  const insAnt=insP.filter(r=>r.fe&&r.fe.startsWith(mesAnt));
+
+  const clM=labMes.reduce((s,r)=>s+Number(r.co||0),0);
+  const cmM=maqMes.reduce((s,r)=>s+Number(r.co||0),0);
+  const ciM=insMes.reduce((s,r)=>s+Number(r.co||0),0);
+  const ctM=clM+cmM+ciM;
+  const clA=labAnt.reduce((s,r)=>s+Number(r.co||0),0);
+  const cmA=maqAnt.reduce((s,r)=>s+Number(r.co||0),0);
+  const ciA=insAnt.reduce((s,r)=>s+Number(r.co||0),0);
+  const ctA=clA+cmA+ciA;
+  const jornM=labMes.reduce((s,r)=>s+Number(r.jo||0),0);
+  const haM=labMes.reduce((s,r)=>s+Number(r.ar||0),0);
+  const hrsM=maqMes.reduce((s,r)=>s+Number(r.hr||0),0);
+  const galM=maqMes.reduce((s,r)=>s+Number(r.ga||0),0);
+  // Deduplicar lluvia por día
+  const llDias={};llMes.forEach(r=>{if(r.fe&&llDias[r.fe]===undefined)llDias[r.fe]=Number(r.mm||0);});
+  const llTot=Object.values(llDias).reduce((s,v)=>s+v,0);
+
+  set('g-ctot-mes',cop(ctM));
+  const tnd=ctA>0?Math.round((ctM-ctA)/ctA*100):0;
+  const tEl=document.getElementById('g-ctot-tend');
+  if(tEl){if(ctA===0)tEl.textContent='primer mes';else tEl.innerHTML=`<span style="color:${tnd>10?'var(--red)':tnd<-5?'var(--green)':'var(--amber)'}">${tnd>0?'↑ +':'↓ '}${tnd}% vs mes ant.</span>`;}
+  set('g-nlab',labMes.length);
+  const pend=labMes.filter(r=>r.es==='Programada'||r.es==='En proceso').length;
+  const nEl=document.getElementById('g-nlab-pend');if(nEl)nEl.textContent=labMes.filter(r=>r.es==='Completada').length+' compl. · '+pend+' pend.';
+  set('g-jorn',jornM.toFixed(1));set('g-ha-trab',haM.toFixed(1));
+
+  // Semáforo
+  const pres=getPresupuesto(mes);
+  const semEl=document.getElementById('g-semaforo');
+  if(semEl){
+    const cats=[{l:'Labores',real:clM,pres:pres.lab,unit:'$'},{l:'Maquinaria',real:cmM,pres:pres.maq,unit:'$'},{l:'Insumos',real:ciM,pres:pres.ins,unit:'$'},{l:'Jornales',real:jornM,pres:pres.jorn,unit:'j'},{l:'Ha',real:haM,pres:pres.ha,unit:'ha'}].filter(x=>x.pres>0);
+    if(!cats.length)semEl.innerHTML='<p style="color:var(--text2);font-size:13px">Define un presupuesto en la pestaña Presupuesto</p>';
+    else semEl.innerHTML=cats.map(x=>{const pct=Math.round(x.real/x.pres*100);const color=pct>100?'var(--red)':pct>80?'var(--amber)':'var(--green)';return`<div class="semaforo-item"><div class="semaforo-dot" style="background:${color}"></div><div class="semaforo-label">${pct>100?'🔴':pct>80?'🟡':'🟢'} ${x.l}</div><div class="semaforo-val"><div style="font-weight:700;color:${color}">${pct}%</div><div>${x.unit==='$'?cop(x.real):x.real.toFixed(1)+' '+x.unit} / ${x.unit==='$'?cop(x.pres):x.pres+' '+x.unit}</div></div></div>`;}).join('');
+  }
+
+  // Rendimiento
+  const rEl=document.getElementById('g-rend-mes');
+  if(rEl){
+    const gR={};labMes.filter(r=>r.ti&&r.ar&&r.jo).forEach(r=>{if(!gR[r.ti])gR[r.ti]={ha:0,j:0};gR[r.ti].ha+=Number(r.ar);gR[r.ti].j+=Number(r.jo);});
+    const en=Object.entries(gR);
+    rEl.innerHTML=en.length?en.map(([ti,d])=>{const real=d.j>0?(d.ha/d.j):0;const est=EST[ti]||1;const pct=Math.min(Math.round(real/est*100),150);const color=pct>=100?'var(--green)':pct>=80?'var(--amber)':'var(--red)';return`<div class="kpi-rend-row"><div class="kpi-rend-lbl">${ti.slice(0,22)}</div><div class="kpi-rend-bar"><div class="kpi-rend-fill" style="width:${Math.min(pct,100)}%;background:${color}"></div></div><div class="kpi-rend-pct" style="color:${color}">${pct}%</div></div>`;}).join(''):'<p style="color:var(--text2);font-size:13px">Sin labores con área y jornales</p>';
+  }
+
+  // Balance hídrico
+  const llEl=document.getElementById('g-lluvia-bal');
+  if(llEl){
+    const [yy,mm2]=mes.split('-');const diasM=diasEnMes(yy,mm2);const diasReg=mes===hoy().slice(0,7)?new Date().getDate():diasM;
+    const reqH2=diasReg*MM_DIA;const bal2=llTot-reqH2;const pct=reqH2>0?Math.min(Math.round(llTot/reqH2*100),150):0;
+    const color=pct>=100?'var(--green)':pct>=60?'var(--amber)':'var(--red)';
+    llEl.innerHTML=`<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span>Registrado: <strong style="color:${color}">${Math.round(llTot)} mm</strong></span><span>Req: <strong>${reqH2} mm</strong></span><span style="color:${color};font-weight:700">${pct}%</span></div><div class="prog-bar"><div class="prog-fill" style="width:${Math.min(pct,100)}%;background:${color}"></div></div><div style="font-size:12px;color:var(--text2);margin-top:6px">${llMes.length} días · Balance: <span style="font-weight:700;color:${color}">${bal2>=0?'+':''}${Math.round(bal2)} mm</span></div>`;
+  }
+
+  // Top costos
+  const tcEl=document.getElementById('g-top-costos');
+  if(tcEl){
+    const gTC={};labMes.filter(r=>r.co>0).forEach(r=>{if(!gTC[r.ti])gTC[r.ti]=0;gTC[r.ti]+=Number(r.co||0);});
+    const topArr=Object.entries(gTC).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    const maxTop=topArr.length?topArr[0][1]:1;
+    tcEl.innerHTML=topArr.length?topArr.map(([ti,v])=>`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>${ti.slice(0,28)}</span><span style="font-weight:700">${cop(v)}</span></div><div class="prog-bar"><div class="prog-fill" style="width:${Math.round(v/maxTop*100)}%;background:var(--green)"></div></div></div>`).join(''):'<p style="color:var(--text2);font-size:13px">Sin labores con costo</p>';
+  }
+
+  // Tab labores
+  const ltEl=document.getElementById('g-lab-tabla');
+  if(ltEl)ltEl.innerHTML=labMes.length?labMes.map(r=>{const sig=siguienteEstado(r.es);const m={Completada:'bg',Programada:'bb','En proceso':'ba'};return`<tr><td>${r.fe?r.fe.slice(5):''}</td><td>${r.lo||'—'}</td><td style="font-size:11px">${(r.ti||'').slice(0,20)}</td><td>${r.ar||'—'}</td><td>${r.jo||'—'}</td><td>${cop(r.co)}</td><td><button onclick="cambiarEstado(${r.id},'${sig}')" style="background:none;border:1px solid var(--border2);border-radius:20px;padding:2px 7px;font-size:11px;font-weight:600;cursor:pointer" class="bdg ${m[r.es]||'bgr'}">${r.es||'—'}</button></td></tr>`;}).join(''):'<tr class="er"><td colspan="7">Sin labores</td></tr>';
+  const lrEl=document.getElementById('g-lab-resumen');
+  if(lrEl){const gLR={};labMes.forEach(r=>{if(!gLR[r.es])gLR[r.es]={n:0};gLR[r.es].n++;});lrEl.innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap">${Object.entries(gLR).map(([es,d])=>`<span class="bdg ${es==='Completada'?'bg':es==='En proceso'?'ba':'bb'}">${es}: ${d.n}</span>`).join('')}</div>`;}
+  const lpEl=document.getElementById('g-lab-pendientes');
+  if(lpEl){const pends=labMes.filter(r=>r.es==='Programada'||r.es==='En proceso');lpEl.innerHTML=pends.length?pends.map(r=>`<div class="act-item"><div class="act-ico">${r.es==='En proceso'?'🔄':'📋'}</div><span style="flex:1;font-size:13px">${r.ti||'—'} · ${r.lo||'—'}</span><span class="act-time">${r.fe?r.fe.slice(5):''}</span></div>`).join(''):'<p style="color:var(--green);font-size:13px">✅ Sin pendientes</p>';}
+
+  // Tab costos - gráfica semanal
+  const gSemEl=document.getElementById('g-chart-sem');
+  if(gSemEl){
+    const semanasG={};
+    const addG=(arr,tipo)=>arr.forEach(r=>{if(!r.fe||!Number(r.co||0))return;const d=new Date(r.fe);const day=d.getDay()||7;const mon=new Date(d);mon.setDate(d.getDate()-day+1);const k=mon.getFullYear()+'-'+String(mon.getMonth()+1).padStart(2,'0')+'-'+String(mon.getDate()).padStart(2,'0');if(!semanasG[k])semanasG[k]={l:0,m:0,i:0};semanasG[k][tipo]+=Number(r.co||0);});
+    addG(labMes,'l');addG(maqMes,'m');addG(insMes,'i');
+    const skG=Object.keys(semanasG).sort();
+    if(skG.length){const tots=skG.map(k=>semanasG[k].l+semanasG[k].m+semanasG[k].i);const mxG=Math.max(...tots,1);gSemEl.innerHTML=skG.map(k=>{const s=semanasG[k];const tot=s.l+s.m+s.i;const hl=Math.max(Math.round(s.l/mxG*120),0);const hm=Math.max(Math.round(s.m/mxG*120),0);const hi=Math.max(Math.round(s.i/mxG*120),0);return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0"><div style="font-size:8px;color:var(--text2);margin-bottom:2px">${cop(tot)}</div><div style="width:100%;display:flex;flex-direction:column;justify-content:flex-end;height:120px;gap:1px">${hi?`<div style="width:100%;height:${hi}px;background:var(--amber);border-radius:2px 2px 0 0"></div>`:''}${hm?`<div style="width:100%;height:${hm}px;background:var(--blue)"></div>`:''}${hl?`<div style="width:100%;height:${hl}px;background:var(--green)${!hi&&!hm?';border-radius:2px 2px 0 0':''}"></div>`:''}${!tot?`<div style="width:100%;height:2px;background:var(--border)"></div>`:''}</div><div style="font-size:8px;color:var(--text3);margin-top:2px">${k.slice(5)}</div></div>`;}).join('');}
+    else gSemEl.innerHTML='<span style="color:var(--text2);font-size:12px;margin:auto">Sin costos</span>';
+  }
+
+  // Comparativa
+  const compEl=document.getElementById('g-comp-meses');
+  if(compEl){const rows=[{cat:'Labores',ant:clA,act:clM},{cat:'Maquinaria',ant:cmA,act:cmM},{cat:'Insumos',ant:ciA,act:ciM},{cat:'TOTAL',ant:ctA,act:ctM}];compEl.innerHTML=rows.map(r=>{const v=r.ant>0?Math.round((r.act-r.ant)/r.ant*100):0;const color=v>10?'var(--red)':v<-5?'var(--green)':'var(--amber)';return`<tr ${r.cat==='TOTAL'?'style="font-weight:700;background:var(--bg3)"':''}><td>${r.cat}</td><td>${cop(r.ant)}</td><td>${cop(r.act)}</td><td style="color:${r.ant>0?color:'var(--text2)'};font-weight:600">${r.ant>0?(v>0?'↑ +':v<0?'↓ ':'')+v+'%':'—'}</td></tr>`;}).join('');}
+
+  // Distribución
+  const distEl=document.getElementById('g-dist-costos');
+  if(distEl&&ctM>0){const catsD=[{l:'Labores',v:clM,c:'var(--green)'},{l:'Maquinaria',v:cmM,c:'var(--blue)'},{l:'Insumos',v:ciM,c:'var(--amber)'}].filter(x=>x.v>0);distEl.innerHTML=catsD.map(x=>{const pct=Math.round(x.v/ctM*100);return`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>${x.l}</span><span style="font-weight:700;color:${x.c}">${pct}% · ${cop(x.v)}</span></div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${x.c}"></div></div></div>`;}).join('');}
+  else if(distEl)distEl.innerHTML='<p style="color:var(--text2);font-size:13px">Sin costos</p>';
+
+  // Tab lotes
+  const lotesKpiEl=document.getElementById('g-lotes-cards');
+  if(lotesKpiEl){
+    const gLK={};
+    labMes.forEach(r=>{if(!r.lo)return;if(!gLK[r.lo])gLK[r.lo]={lab:0,maq:0,ha:0,n:0};gLK[r.lo].lab+=Number(r.co||0);gLK[r.lo].ha+=Number(r.ar||0);gLK[r.lo].n++;});
+    maqMes.forEach(r=>{if(!r.lo||r.lo==='—')return;if(!gLK[r.lo])gLK[r.lo]={lab:0,maq:0,ha:0,n:0};gLK[r.lo].maq+=Number(r.co||0);});
+    const enLK=Object.entries(gLK).sort((a,b)=>(b[1].lab+b[1].maq)-(a[1].lab+a[1].maq));
+    const maxLK=enLK.length?enLK[0][1].lab+enLK[0][1].maq:1;
+    lotesKpiEl.innerHTML=enLK.length?enLK.map(([lo,d])=>{const tot=d.lab+d.maq;const lot=lotes.find(l=>l.nombre===lo);const ha=lot&&lot.ha>0?lot.ha:1;const cph=tot/ha;const color=cph>5000000?'var(--red)':cph>3000000?'var(--amber)':'var(--green)';return`<div class="lote-kpi-bar"><div class="lote-kpi-nombre">${lo}</div><div class="lote-kpi-info"><span>${d.n} labores · ${d.ha.toFixed(1)} ha</span><span style="font-weight:700;color:${color}">${cop(cph)}/ha</span></div><div class="prog-bar"><div class="prog-fill" style="width:${Math.round(tot/maxLK*100)}%;background:${color}"></div></div><div style="font-size:11px;color:var(--text2);margin-top:2px">Lab: ${cop(d.lab)} · Maq: ${cop(d.maq)} · Total: ${cop(tot)}</div></div>`;}).join(''):'<p style="color:var(--text2);font-size:13px">Sin labores por lote este mes</p>';
+  }
+  const lotTabEl=document.getElementById('g-lotes-tabla');
+  if(lotTabEl){const gLT={};labMes.forEach(r=>{if(!r.lo)return;if(!gLT[r.lo])gLT[r.lo]={n:0,ha:0,co:0};gLT[r.lo].n++;gLT[r.lo].ha+=Number(r.ar||0);gLT[r.lo].co+=Number(r.co||0);});const enLT=Object.entries(gLT).sort((a,b)=>b[1].co-a[1].co);lotTabEl.innerHTML=enLT.length?enLT.map(([lo,d])=>{const lot=lotes.find(l=>l.nombre===lo);const ha=lot&&lot.ha>0?lot.ha:1;const cph=d.co/ha;return`<tr><td>${lo}</td><td>${d.n}</td><td>${d.ha.toFixed(1)}</td><td>${cop(d.co)}</td><td style="font-weight:700;color:${cph>5000000?'var(--red)':cph>3000000?'var(--amber)':'var(--green)'}">${cop(cph)}</td></tr>`;}).join(''):'<tr class="er"><td colspan="5">Sin datos</td></tr>';}
+
+  // Tab maquinaria
+  set('g-maq-hrs',hrsM.toFixed(1));set('g-maq-cost',cop(cmM));
+  set('g-maq-cph',hrsM>0?cop(Math.round(cmM/hrsM)):'$0');set('g-maq-gal',galM.toFixed(1));
+  const maqBarEl=document.getElementById('g-maq-barras');
+  if(maqBarEl){const gMQ={};maqMes.forEach(r=>{if(!gMQ[r.mq])gMQ[r.mq]={hrs:0,co:0,n:0};gMQ[r.mq].hrs+=Number(r.hr||0);gMQ[r.mq].co+=Number(r.co||0);gMQ[r.mq].n++;});const enMQ=Object.entries(gMQ).sort((a,b)=>b[1].hrs-a[1].hrs);const maxH=enMQ.length?enMQ[0][1].hrs:1;maqBarEl.innerHTML=enMQ.length?enMQ.map(([mq,d])=>`<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="font-weight:600">${mq.slice(0,20)}</span><span style="color:var(--text2)">${d.hrs.toFixed(1)}h · ${cop(d.co)}</span></div><div class="prog-bar"><div class="prog-fill" style="width:${Math.round(d.hrs/maxH*100)}%;background:var(--blue)"></div></div></div>`).join(''):'<p style="color:var(--text2);font-size:13px">Sin maquinaria</p>';}
+  const mantAlEl=document.getElementById('g-mant-alertas');
+  if(mantAlEl){const hoyS=hoy();const alertas=mnt.filter(r=>r.pr&&r.pr<=hoyS);mantAlEl.innerHTML=alertas.length?alertas.map(r=>`<div class="act-item"><div class="act-ico">🔧</div><span style="flex:1;font-size:13px">${r.mq||'—'}: ${r.ti||'—'}</span><span class="act-time" style="color:var(--red)">${r.pr?r.pr.slice(5):'—'}</span></div>`).join(''):'<p style="color:var(--green);font-size:13px">✅ Sin mantenimientos vencidos</p>';}
+  const maqTabEl=document.getElementById('g-maq-tabla');
+  if(maqTabEl)maqTabEl.innerHTML=maqMes.length?maqMes.map(r=>`<tr><td>${r.fe?r.fe.slice(5):''}</td><td style="font-size:11px">${(r.mq||'').slice(0,12)}</td><td style="font-size:11px">${(r.lb||'').slice(0,14)}</td><td>${r.hr}h</td><td>${cop(r.co)}</td></tr>`).join(''):'<tr class="er"><td colspan="5">Sin maquinaria</td></tr>';
+
+  // Tab presupuesto ejecución
+  const presEjEl=document.getElementById('g-pres-ejecucion');
+  if(presEjEl){const p2=getPresupuesto(mes);const cats2=[{l:'Labores',real:clM,pres:p2.lab,unit:'$',icon:'👷'},{l:'Maquinaria',real:cmM,pres:p2.maq,unit:'$',icon:'🚜'},{l:'Insumos',real:ciM,pres:p2.ins,unit:'$',icon:'🧴'},{l:'Jornales',real:jornM,pres:p2.jorn,unit:'j',icon:'📅'},{l:'Ha',real:haM,pres:p2.ha,unit:'ha',icon:'📐'}].filter(x=>x.pres>0);if(!cats2.length)presEjEl.innerHTML='<p style="color:var(--text2);font-size:13px">Define el presupuesto arriba</p>';else presEjEl.innerHTML=cats2.map(x=>{const pct=Math.round(x.real/x.pres*100);const color=pct>100?'var(--red)':pct>80?'var(--amber)':'var(--green)';const rest=x.pres-x.real;return`<div style="margin-bottom:12px;padding:12px;background:var(--bg3);border-radius:10px;border-left:3px solid ${color}"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-weight:700;font-size:13px">${x.icon} ${x.l}</span><span style="font-weight:800;color:${color};font-size:14px">${pct}%</span></div><div class="prog-bar" style="height:10px"><div class="prog-fill" style="width:${Math.min(pct,100)}%;background:${color}"></div></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-top:5px"><span>Ejecutado: ${x.unit==='$'?cop(x.real):x.real.toFixed(1)+' '+x.unit}</span><span>Ppto: ${x.unit==='$'?cop(x.pres):x.pres+' '+x.unit}</span><span style="color:${rest>=0?'var(--green)':'var(--red)'};font-weight:600">${rest>=0?'Disp: ':'Exceso: '}${x.unit==='$'?cop(Math.abs(rest)):Math.abs(rest).toFixed(1)+' '+x.unit}</span></div></div>`;}).join('');}
+  const presHistEl=document.getElementById('g-pres-historial');
+  if(presHistEl){try{const ap=JSON.parse(localStorage.getItem(KP)||'{}');const meses=Object.keys(ap).sort().reverse().slice(0,6);presHistEl.innerHTML=meses.length?`<table><thead><tr><th>Mes</th><th>Lab.</th><th>Maq.</th><th>Ins.</th><th>Total</th></tr></thead><tbody>${meses.map(k=>{const p=ap[k];const[py,pm]=k.split('-');return`<tr><td style="font-size:12px">${MESES[parseInt(pm)-1]} ${py}</td><td>${cop(p.lab)}</td><td>${cop(p.maq)}</td><td>${cop(p.ins)}</td><td style="font-weight:700">${cop(p.lab+p.maq+p.ins)}</td></tr>`;}).join('')}</tbody></table>`:'<p style="color:var(--text2);font-size:13px">Sin presupuestos</p>';}catch{}}
+}
+
+function expGerLabores(){const mes=getMesSeleccionado();const labMes=lab.filter(r=>r.fe&&r.fe.startsWith(mes)&&!String(r.ob||'').startsWith('[cacao]'));if(!labMes.length){toast('Sin labores');return;}dlCSV(`labores_${mes}.csv`,toCSV(labMes,['fe','lo','ti','tr','ar','jo','co','es','ob']));toast('Exportado');}
+function exportarReporteMes(){
+  const mes=getMesSeleccionado();const [y,m]=mes.split('-');const nomMes=MESES[parseInt(m)-1]+' '+y;
+  const labMes=lab.filter(r=>r.fe&&r.fe.startsWith(mes)&&!String(r.ob||'').startsWith('[cacao]'));
+  const maqMes=maq.filter(r=>r.fe&&r.fe.startsWith(mes));
+  const insMes=ins.filter(r=>r.fe&&r.fe.startsWith(mes)&&!String(r.ob||'').startsWith('[cacao]'));
+  const llMes=ll.filter(r=>r.fe&&r.fe.startsWith(mes));
+  const cl=labMes.reduce((s,r)=>s+Number(r.co||0),0);
+  const cm=maqMes.reduce((s,r)=>s+Number(r.co||0),0);
+  const ci=insMes.reduce((s,r)=>s+Number(r.co||0),0);
+  const jo=labMes.reduce((s,r)=>s+Number(r.jo||0),0);
+  const ha=labMes.reduce((s,r)=>s+Number(r.ar||0),0);
+  // Deduplicar lluvia por día
+  const llDias={};llMes.forEach(r=>{if(r.fe&&llDias[r.fe]===undefined)llDias[r.fe]=Number(r.mm||0);});
+  const llTot=Object.values(llDias).reduce((s,v)=>s+v,0);
+  const pres=getPresupuesto(mes);
+  const [yy,mm2]=mes.split('-');const diasM=diasEnMes(yy,mm2);
+  const lines=[
+    'REPORTE MENSUAL AGROYARICO — '+nomMes,
+    'Generado: '+new Date().toLocaleString('es-CO'),'',
+    '=== RESUMEN FINANCIERO ===',
+    'Labores:      '+copF(cl),
+    'Maquinaria:   '+copF(cm),
+    'Insumos:      '+copF(ci),
+    'TOTAL:        '+copF(cl+cm+ci),'',
+    '=== EJECUCIÓN VS PRESUPUESTO ===',
+    pres.lab>0?'Labores: '+Math.round(cl/pres.lab*100)+'% ('+copF(cl)+' / '+copF(pres.lab)+')':'Labores: sin presupuesto',
+    pres.maq>0?'Maquinaria: '+Math.round(cm/pres.maq*100)+'% ('+copF(cm)+' / '+copF(pres.maq)+')':'Maquinaria: sin presupuesto',
+    pres.ins>0?'Insumos: '+Math.round(ci/pres.ins*100)+'% ('+copF(ci)+' / '+copF(pres.ins)+')':'Insumos: sin presupuesto','',
+    '=== LABORES ===',
+    'Total: '+labMes.length,
+    'Completadas: '+labMes.filter(r=>r.es==='Completada').length,
+    'Ha trabajadas: '+ha.toFixed(2),
+    'Jornales: '+jo.toFixed(1),
+    'Ha/jornal: '+(jo>0?(ha/jo).toFixed(2):'—'),'',
+    '=== MAQUINARIA ===',
+    'Horas: '+maqMes.reduce((s,r)=>s+Number(r.hr||0),0).toFixed(1),
+    'Costo: '+copF(cm),'',
+    '=== LLUVIA ===',
+    'Total: '+Math.round(llTot)+' mm',
+    'Días registrados: '+llMes.length,
+    'Requerido mes: '+(diasM*MM_DIA)+' mm',
+    'Balance: '+Math.round(llTot-(diasM*MM_DIA))+' mm','',
+    '=== DETALLE LABORES ===',
+    'Fecha,Lote,Labor,Ha,Jornales,Costo,Estado',
+    ...labMes.map(r=>[r.fe||'',r.lo||'',r.ti||'',r.ar||'',r.jo||'',r.co||'0',r.es||''].join(',')),
+  ];
+  const b=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='Reporte_Agroyarico_'+mes+'.txt';a.click();
+  toast('✓ Reporte exportado');
+}
+
+// ── EXPORT ────────────────────────────────────────────────────
+function toCSV(rows,cols){return[cols.join(','),...rows.map(r=>cols.map(c=>'"'+(r[c]||'')+'"').join(','))].join('\n');}
+function dlCSV(name,content){const b=new Blob(['﻿'+content],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();}
+function expL(){if(!lab.length){toast('Sin datos');return;}dlCSV('labores.csv',toCSV(lab,['fe','lo','ti','tr','ar','jo','co','es','ob']));toast('Exportado');}
+function expM(){if(!maq.length){toast('Sin datos');return;}dlCSV('maquinaria.csv',toCSV(maq,['fe','mq','lb','lo','hr','ar','ga','co','op','ob']));toast('Exportado');}
+function expC(){if(!cos.length){toast('Sin datos');return;}dlCSV('cosechas.csv',toCSV(cos,['fe','lo','ra','kg','tHa','val','ob']));toast('Exportado');}
+function expLL(){if(!ll.length){toast('Sin datos');return;}dlCSV('lluvia.csv',toCSV(ll,['fe','mm','ob']));toast('Exportado');}
+function expI(){if(!ins.length){toast('Sin datos');return;}dlCSV('insumos.csv',toCSV(ins,['fe','ti','lo','ca','co','ob']));toast('Exportado');}
+function exportarDatos(){const d={lotes,ccLotes,lab,maq,mnt,cos,ll,ins,fecha:new Date().toISOString()};const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='agroyarico_'+hoy()+'.json';a.click();toast('Datos exportados');}
+async function confirmarBorrar(){
+  if(!confirm('⚠ Borrar TODOS los datos. ¿Seguro?'))return;
+  if(!confirm('Confirmación final. ¿Borrar permanentemente?'))return;
+  syncOn();
+  try{
+    await Promise.all([
+      fetch(SB_URL+'/rest/v1/labores?id=gte.0',{method:'DELETE',headers:HEADERS}),
+      fetch(SB_URL+'/rest/v1/maquinaria?id=gte.0',{method:'DELETE',headers:HEADERS}),
+      fetch(SB_URL+'/rest/v1/mantenimientos?id=gte.0',{method:'DELETE',headers:HEADERS}),
+      fetch(SB_URL+'/rest/v1/cosechas?id=gte.0',{method:'DELETE',headers:HEADERS}),
+      fetch(SB_URL+'/rest/v1/lluvias?id=gte.0',{method:'DELETE',headers:HEADERS}),
+      fetch(SB_URL+'/rest/v1/insumos?id=gte.0',{method:'DELETE',headers:HEADERS}),
+    ]);
+    lab=[];maq=[];mnt=[];cos=[];ll=[];ins=[];renderAll();toast('Datos borrados');
+  }catch(e){toastErr(e);}
+  syncOff();
+}
+
+// ── DIAGNÓSTICO ───────────────────────────────────────────────
+async function runDiag(){
+  const el=document.getElementById('diag-out');if(!el)return;
+  el.textContent='⏳ Probando…';const t0=Date.now();const res=[];
+  try{const r=await apiGet('labores','select=id&limit=1');res.push('✅ LECTURA: '+(r.length?'hay datos':'tabla vacía'));}
+  catch(e){res.push('❌ LECTURA FALLA: '+e.message);}
+  try{
+    const rows=await apiPost('lluvias',{fecha:hoy(),mm:0.01,obs:'[TEST]'});
+    if(rows&&rows[0]){try{await apiDelete('lluvias',rows[0].id);}catch(e2){}res.push('✅ ESCRITURA OK — guardado y borrado');}
+    else res.push('⚠ ESCRITURA: sin respuesta');
+  }catch(e){res.push('❌ ESCRITURA FALLA: '+e.message);}
+  res.push('');res.push('📱 '+navigator.userAgent.slice(0,70));res.push('🌐 Online: '+navigator.onLine);res.push('⏱ '+( Date.now()-t0)+'ms');
+  el.textContent=res.join('\n');
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+cargarTodo();
+
+</script>
+
+<script>
+// ── SERVICE WORKER (funciona sin señal) ──────────────────────
+if ('serviceWorker' in navigator) {
+  // Inline service worker as blob
+  const swCode = `
+const CACHE = 'agroyarico-v8';
+const ASSETS = [self.location.href];
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch', e => {
+  // For API calls: network first, no cache
+  if (e.request.url.includes('supabase.co')) {
+    e.respondWith(
+      fetch(e.request).catch(() => new Response('[]', {headers:{'Content-Type':'application/json'}}))
+    );
+    return;
+  }
+  // For app itself: cache first
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      if (cached) return cached;
+      return fetch(e.request).then(response => {
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE).then(cache => cache.put(e.request, clone));
+        }
+        return response;
+      }).catch(() => cached || new Response('Sin conexión', {status:503}));
+    })
+  );
+});
+`;
+  const blob = new Blob([swCode], {type:'application/javascript'});
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).then(() => {
+    console.log('SW registrado');
+  }).catch(e => console.warn('SW error:', e));
+}
+</script>
+</body>
+</html>
